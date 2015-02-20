@@ -1,0 +1,958 @@
+print('hello world')
+getwd()
+ls()
+a = 29#
+class(a)#
+b = as(a, "integer")#
+b#
+class(b)#
+c = as(a, "character")#
+c#
+class(c)
+b="ch"#
+class(b)#
+c=FALSE#
+class(c)#
+c=c("log", "ic", "al")#
+c#
+class(c)#
+c[2]#
+b[2]#
+b[1]
+a=c(1,3,5)#
+class(a)#
+a#
+a[2]#
+a[3]#
+a[1]#
+a.vec=c(1,3,5)#
+a[2]=67#
+a
+b=as(a,"integer")#
+b#
+b[2]=67.1#
+b
+class(b)
+b[3]="hello"#
+b
+class(b)
+Z=matrix(c(1,2,3,11,12,13))#
+z=c(1,2,3,11,12,13)#
+z[4]
+Z
+Z[4,1]
+z[4,1]
+Z=matrix(c(1,2,3,11,12,13), nrow=2, ncol=3)
+Z
+Z[2,3]
+Z=matrix(c(1,2,3,11,12,13), nrow=2, ncol=3, byrow=TRUE)
+Z
+Z=matrix(c(1,2,3,11,12,13), nrow=2, ncol=3, byrow=TRUE, dimnames=list(c("r1", "r2"), c("c1","c2", "c3")))
+Z
+Z[2,]
+z=1:10
+z=1:10#
+z=seq(1,10,2)#
+z=1:10#
+#
+dim(z)=c(5,2)
+z
+z=list(1:10)#
+z#
+length(z)#
+z[1]
+z=list(1:10)#
+z#
+length(z)#
+z[1]#
+y=z[[1]]#
+y
+Y=cbind(c(1,2,3), c(4,5,6))
+Y
+Y=cbind(c(1,2,3), c(4,5,6))#
+Y#
+Y=rbind(c(1,2,3), c(4,5,6))#
+Y
+YY=Y*Y
+YY
+W=cbind(c(3,4,6,7), c(1,1,1,1))#
+W
+Z
+WZ = W %*% Z
+WZ
+t(Z)
+WZ %*% Z
+WZ %*% t(Z)
+names = c("phyllis", "feihan", "evan")#
+test1 = c(95,85,92)#
+names#
+test1#
+test2 = c(92,88,99)#
+names#
+rm(names)#
+names#
+names(Z)
+scores
+scores=data.frame(fullnames=c("phyllis","feihan","evan"), t1=test1, t2=test2)
+scores
+names(scores)
+scores$fullnames
+scores$t1
+class(scores$fullnames)
+data=c(1,2,2,3,1,2,3,3,1,2,3,1)#
+data
+fdata=factor(data)#
+fdata
+rdata=factor(data, labels=c("I","II", "III"))#
+rdata
+rdata=factor(data, labels=c("survive","death", "ill"))
+rdata
+fdata
+ls()
+Z
+myarray=array(seq(1,48,2), dimc(3,4,2))
+myarray=array(seq(1,48,2), dim=c(3,4,2))
+myarray
+myarray=array(seq(1,24,2), dim=c(3,4,2))
+myarray
+myarray=array(seq(1,24,1), dim=c(3,4,2))
+myarray
+myarray[2,4,2]
+myarray
+myarray[2,4,2]=TRUE
+myarray
+xx=FALSE#
+!xx
+rm(xx)
+rm(x)
+mean(x=1:10)
+x
+install.packages("pixmap")
+setwd("~/Dropbox/SIPA/Data Mining/hw06")
+library(tm)#
+library(SnowballC)#
+library(rpart)#
+library(glmnet)
+To read in data from the directories:#
+# Partially based on code from C. Shalizi#
+read.directory <- function(dirname) {#
+    # Store the infiles in a list#
+    infiles = list();#
+    # Get a list of filenames in the directory#
+    filenames = dir(dirname,full.names=TRUE);#
+    for (i in 1:length(filenames)){#
+        infiles[[i]] = scan(filenames[i],what="",quiet=TRUE);#
+         }#
+    return(infiles)#
+}#
+hamilton.train <- read.directory('fp_hamilton_train_clean')#
+hamilton.test <- read.directory('fp_hamilton_test_clean')#
+madison.train <- read.directory('fp_madison_train_clean')#
+madison.test <- read.directory('fp_madison_test_clean')
+Make dictionary sorted by number of times a word appears in corpus #
+# (useful for using commonly appearing words as factors)#
+# NOTE: Use the *entire* corpus: training, testing, spam and ham#
+make.sorted.dictionary.df <- function(infiles){#
+    # This returns a dataframe that is sorted by the number of times #
+    # a word appears#
+    # List of vectors to one big vetor#
+    dictionary.full <- unlist(infiles) #
+    # Tabulates the full dictionary#
+    tabulate.dic <- tabulate(factor(dictionary.full)) #
+    # Find unique values#
+    dictionary <- unique(dictionary.full) #
+    # Sort them alphabetically#
+    dictionary <- sort(dictionary)#
+    dictionary.df <- data.frame(word = dictionary, count = tabulate.dic)#
+    sort.dictionary.df <- dictionary.df[order(dictionary.df$count,decreasing=TRUE),];#
+    return(sort.dictionary.df)#
+}#
+dictionary <- make.sorted.dictionary.df(c(hamilton.train,hamilton.test,madison.train,madison.test))
+Make a document-term matrix, which counts the number of times each #
+# dictionary element is used in a document#
+make.document.term.matrix <- function(infiles,dictionary){#
+    # This takes the text and dictionary objects from above and outputs a #
+    # document term matrix#
+    num.infiles <- length(infiles);#
+    num.words <- nrow(dictionary);#
+    # Instantiate a matrix where rows are documents and columns are words#
+    dtm <- mat.or.vec(num.infiles,num.words); # A matrix filled with zeros#
+    for (i in 1:num.infiles){#
+        num.words.infile <- length(infiles[[i]]);#
+        infile.temp <- infiles[[i]];#
+        for (j in 1:num.words.infile){#
+            ind <- which(dictionary == infile.temp[j])[[1]];#
+            # print(sprintf('%s,%s', i , ind))#
+            dtm[i,ind] <- dtm[i,ind] + 1;#
+            #print(c(i,j))#
+        }#
+    }#
+return(dtm);#
+}#
+dtm.hamilton.train <- make.document.term.matrix(hamilton.train,dictionary)#
+dtm.hamilton.test <- make.document.term.matrix(hamilton.test,dictionary)#
+dtm.madison.train <- make.document.term.matrix(madison.train,dictionary)#
+dtm.madison.test <- make.document.term.matrix(madison.test,dictionary)#
+# check if the 4 dtm datasets are correct#
+dim(dtm.hamilton.train)		# 35 4875#
+dim(dtm.hamilton.test)		# 16 4875#
+dim(dtm.madison.train)		# 15 4875#
+dim(dtm.madison.test)		# 11 4875
+make training and test sets w/ #
+# y=0 if Madison; =1 if Hamilton#
+# & var names being dictionary words#
+dat.train <- as.data.frame(rbind(dtm.hamilton.train, dtm.madison.train))#
+dat.test <- as.data.frame(rbind(dtm.hamilton.test, dtm.madison.test))#
+names(dat.train) <- names(dat.test) <- as.vector(dictionary$word)#
+dat.train$y <- as.factor(c(rep(1, nrow(dtm.hamilton.train)), rep(0, nrow(dtm.madison.train))))#
+dat.test$y <- as.factor(c(rep(1, nrow(dtm.hamilton.test)), rep(0, nrow(dtm.madison.test))))#
+# note: as.factor() makes the y label as factor, which is helpful for svm later (so it will do classification)#
+dim(dat.train)		# 50 4876#
+dim(dat.test)		# 27 4876
+center and scale the data as in HW05#
+mean.train <- apply(dat.train[,-4876], 2, mean)		# col means of training x#
+sd.train <- apply(dat.train[,-4876], 2, sd)			# col sd of training x#
+#
+x.train <- scale(dat.train[,-4876])					# standardize training x#
+x.train[,sd.train==0] <- 0							# let the var be 0 if its sd=0#
+#
+x.test <- scale(dat.test[,-4876], center = mean.train, scale=sd.train)		# use training x mean & sd to standardize test x#
+x.test[,sd.train==0] <- 0							# let the var be 0 if its sd=0#
+#
+y.train <-dat.train$y#
+y.test <- dat.test$y
+training = data.frame(x=x.train[,1:100],y=y.train)#
+svmfit.svm(y~.,data=training, kernel="linear", cost=10, scale=FALSE)
+dat.train
+setwd("~/Dropbox/SIPA/Data Mining/hw06")#
+# first include the relevant libraries#
+# note that a loading error might mean that you have to#
+# install the package into your R distribution.#
+# Use the package installer and be sure to install all dependencies#
+library(ISLR)#
+library(gbm)#
+library(glmnet)#
+library(randomForest)
+data("Hitters")#
+Hitters#
+#
+H2 <- Hitters[!is.na(Hitters$Salary),,drop=F]#
+H2$Salary <- log(H2$Salary)#
+H2$Salary#
+#
+##################
+# Problem 1b#
+##################
+#
+H2.train <- H2[1:200,]#
+H2.test <- H2[201:nrow(H2),]#
+#
+dim(H2.train)#
+dim(H2.test)
+library(gbm)#
+set.seed(5)#
+#
+shrink.lambdas=c(0.00001,0.0001,0.001,0.01,0.1,1)#
+training_error=rep(NA,length(shrink.lambdas))#
+testing_error=rep(NA,length(shrink.lambdas))#
+for (i in 1:length(shrink.lambdas)){ #
+	sl = shrink.lambdas[i]#
+	boost_hitters = gbm(Salary~., data=H2.train, distribution="gaussian", n.trees=1000, shrink.lambdas = sl, interaction.depth=1, n.cores=10) #
+	predictions_train = predict(boost_hitters,newdata=H2.train, n.trees=1000)#
+	predictions_test = predict(boost_hitters,newdata=H2.test, n.trees=1000)#
+	training_error[i]=mean((predictions - H2.train$Salary)^2)#
+	testing_error[i]=mean((predictions - H2.test$Salary)^2) #
+	} #
+plot(log(shrink.lambdas),training_error)
+for (i in 1:length(shrink.lambdas)){ #
+	sl = shrink.lambdas[i]#
+	boost_hitters = gbm(Salary~., data=H2.train, distribution="gaussian", n.trees=1000, interaction.depth=1, n.cores=10) #
+	predictions_train = predict(boost_hitters,newdata=H2.train, n.trees=1000)#
+	predictions_test = predict(boost_hitters,newdata=H2.test, n.trees=1000)#
+	training_error[i]=mean((predictions - H2.train$Salary)^2)#
+	testing_error[i]=mean((predictions - H2.test$Salary)^2) #
+	} #
+plot(log(shrink.lambdas),training_error)
+for (i in 1:length(shrink.lambdas)){ #
+	sl = shrink.lambdas[i]#
+	boost_hitters = gbm(H2$Salary~., data=H2.train, distribution="gaussian", n.trees=1000,shrink.lambdas = sl, interaction.depth=1, n.cores=10) #
+	predictions_train = predict(boost_hitters,newdata=H2.train, n.trees=1000)#
+	predictions_test = predict(boost_hitters,newdata=H2.test, n.trees=1000)#
+	training_error[i]=mean((predictions - H2.train$Salary)^2)#
+	testing_error[i]=mean((predictions - H2.test$Salary)^2) #
+	} #
+plot(log(shrink.lambdas),training_error)
+Salary
+for (i in 1:length(shrink.lambdas)){ #
+	sl = shrink.lambdas[i]#
+	boost_hitters = gbm(H2$Salary~., data=H2.train, distribution="gaussian", n.trees=1000,shrink.lambdas = sl, interaction.depth=1, n.cores=10) #
+	predictions_train = predict(boost_hitters,newdata=H2.train, n.trees=1000)#
+	predictions_test = predict(boost_hitters,newdata=H2.test, n.trees=1000)#
+	training_error[i]=mean((predictions_train - H2.train$Salary)^2)#
+	testing_error[i]=mean((predictions_test - H2.test$Salary)^2) #
+	} #
+plot(log(shrink.lambdas),training_error)
+for (i in 1:length(shrink.lambdas)){ #
+	sl = shrink.lambdas[i]#
+	boost_hitters = gbm(H2$Salary~., data=H2.train, distribution="gaussian", n.trees=1000, interaction.depth=1, n.cores=10) #
+	predictions_train = predict(boost_hitters,newdata=H2.train, n.trees=1000)#
+	predictions_test = predict(boost_hitters,newdata=H2.test, n.trees=1000)#
+	training_error[i]=mean((predictions_train - H2.train$Salary)^2)#
+	testing_error[i]=mean((predictions_test - H2.test$Salary)^2) #
+	} #
+plot(log(shrink.lambdas),training_error)
+library(gbm)#
+set.seed(5)#
+#
+shrink.lambdas=c(0.00001,0.0001,0.001,0.01,0.1,1)#
+training_error=rep(NA,length(shrink.lambdas))#
+testing_error=rep(NA,length(shrink.lambdas))#
+#shrink.lambdas = sl#
+#
+for (i in 1:length(shrink.lambdas)){ #
+	sl = shrink.lambdas[i]#
+	boost_hitters = gbm(H2$Salary~., data=H2.train, distribution="gaussian", n.trees=1000, interaction.depth=1, n.cores=10) #
+	predictions_train = predict(boost_hitters,newdata=H2.train, n.trees=1000)#
+	predictions_test = predict(boost_hitters,newdata=H2.test, n.trees=1000)#
+	training_error[i]=mean((predictions_train - H2.train$Salary)^2)#
+	testing_error[i]=mean((predictions_test - H2.test$Salary)^2) #
+	} #
+plot(log(shrink.lambdas),training_error)
+for (i in 1:length(shrink.lambdas)){ #
+	sl = shrink.lambdas[i]#
+	boost_hitters = gbm(H2$Salary~., data=H2.train, distribution="gaussian", n.trees=1000, ) #
+	predictions_train = predict(boost_hitters,newdata=H2.train, n.trees=1000)#
+	predictions_test = predict(boost_hitters,newdata=H2.test, n.trees=1000)#
+	training_error[i]=mean((predictions_train - H2.train$Salary)^2)#
+	testing_error[i]=mean((predictions_test - H2.test$Salary)^2) #
+	} #
+plot(log(shrink.lambdas),training_error)
+for (i in 1:length(shrink.lambdas)){ #
+	#sl = shrink.lambdas[i]#
+	boost_hitters = gbm(H2$Salary~., data=H2.train, distribution="gaussian", n.trees=1000, shrinkage = shrink.lambdas[i]) #
+	predictions_train = predict(boost_hitters,H2.train, n.trees=1000)#
+	predictions_test = predict(boost_hitters,H2.test, n.trees=1000)#
+	training_error[i]=mean((predictions_train - H2.train$Salary)^2)#
+	testing_error[i]=mean((predictions_test - H2.test$Salary)^2) #
+	} #
+plot(log(shrink.lambdas),training_error)
+for (i in 1:length(shrink.lambdas)){ #
+	#sl = shrink.lambdas[i]#
+	boost_hitters = gbm(Salary~., data=H2.train, distribution="gaussian", n.trees=1000, shrinkage = shrink.lambdas[i]) #
+	predictions_train = predict(boost_hitters,H2.train, n.trees=1000)#
+	predictions_test = predict(boost_hitters,H2.test, n.trees=1000)#
+	training_error[i]=mean((predictions_train - H2.train$Salary)^2)#
+	testing_error[i]=mean((predictions_test - H2.test$Salary)^2) #
+	} #
+plot(log(shrink.lambdas),training_error)
+plot(log(shrink.lambdas),testing_error)
+plot(shrink.lambdas,training_error)
+plot(log(shrink.lambdas),training_error)
+plot(log(shrink.lambdas),testing_error)
+boosting#
+#
+boost_results = training_error[which.min(training_error)]#
+#best subset lm#
+#
+library(leaps)#
+#
+placeholder = regsubsets(Salary~., data=H2.train, nvmax=19)#
+placeholder_s = summary(placeholder)#
+#
+a = fit.summ$which[which.min(placeholder_s$cp),][2:20]#
+#
+names = c(features,"Division","Salary")#
+#
+placeholder.lm = lm(Salary~.,data=H2.train[,colnames(H2.train)%in%names])#
+subsetlm_prediction = predict(fit.lm,H.test[,colnames(H.train)%in%features])#
+bestsub = mean((subsetlm_prediction-H2.test$Salary)^2)#
+#best lasso#
+#
+library(glmnet)#
+#
+cols.bad=c("League","Division","NewLeague")#
+n.H=model.matrix(~.,H)[,-1]#
+n.H.train=n.H[1:200,]#
+n.H.test=n.H[201:nrow(n.H),]#
+#
+fit=cv.glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"])#
+fit=glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"],lambda=fit$lambda.1se) pred=predict(fit,n.H.test[,colnames(n.H)!="Sallary"])#
+best.lasso=mean((pred[,1]-H.test$Salary)^2)#
+train_matrix = model.matrix(Salary~., data=H2.train)#
+test_matrix = model.matrix(Salary~., data=H2.test)#
+salaries = H2.train$Salary#
+#
+fit = glmnet(x,y,alpha=1)#
+lasso_prediction = predict(fit, s=0.01, xhat=test_matrix)#
+best.lasso = mean((salaries - lasso_prediction)^2)#
+#compare the test MSEs#
+#
+boost_results#
+bestsub #
+best.lasso
+boosting#
+#
+boost_results = training_error[which.min(training_error)]#
+#best subset lm#
+#
+library(leaps)#
+#
+placeholder = regsubsets(Salary~., data=H2.train, nvmax=19)#
+placeholder_s = summary(placeholder)#
+#
+a = fit.summ$which[which.min(placeholder_s$cp),][2:20]#
+#
+names = c(features,"Division","Salary")#
+#
+placeholder.lm = lm(Salary~.,data=H2.train[,colnames(H2.train)%in%names])#
+subsetlm_prediction = predict(fit.lm,H.test[,colnames(H.train)%in%features])#
+bestsub = mean((subsetlm_prediction-H2.test$Salary)^2)#
+#best lasso#
+#
+library(glmnet)#
+#
+cols.bad=c("League","Division","NewLeague")#
+n.H=model.matrix(~.,H)[,-1]#
+n.H.train=n.H[1:200,]#
+n.H.test=n.H[201:nrow(n.H),]#
+#
+fit=cv.glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"])#
+fit=glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"],lambda=fit$lambda.1se) pred=predict(fit,n.H.test[,colnames(n.H)!="Sallary"])#
+best.lasso=mean((pred[,1]-H.test$Salary)^2)#
+train_matrix = model.matrix(Salary~., data=H2.train)#
+test_matrix = model.matrix(Salary~., data=H2.test)#
+salaries = H2.train$Salary#
+#
+fit = glmnet(x,y,alpha=1)#
+lasso_prediction = predict(fit, s=0.01, xhat=test_matrix)#
+best.lasso = mean((salaries - lasso_prediction)^2)#
+#compare the test MSEs#
+#
+boost_results#
+bestsub #
+best.lasso
+??fit.summ
+boosting#
+#
+boost_results = training_error[which.min(training_error)]#
+#best subset lm#
+#
+library(leaps)#
+#
+placeholder = regsubsets(Salary~., data=H2.train, nvmax=19)#
+placeholder_s = summary(placeholder)#
+#
+a = placeholder_s$which[which.min(placeholder_s$cp),][2:20]#
+#
+names = c(names,"Division","Salary")#
+#
+placeholder.lm = lm(Salary~.,data=H2.train[,colnames(H2.train)%in%names])#
+subsetlm_prediction = predict(fit.lm,H.test[,colnames(H.train)%in%names])#
+bestsub = mean((subsetlm_prediction-H2.test$Salary)^2)#
+#best lasso#
+#
+library(glmnet)#
+#
+cols.bad=c("League","Division","NewLeague")#
+n.H=model.matrix(~.,H)[,-1]#
+n.H.train=n.H[1:200,]#
+n.H.test=n.H[201:nrow(n.H),]#
+#
+fit=cv.glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"])#
+fit=glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"],lambda=fit$lambda.1se) pred=predict(fit,n.H.test[,colnames(n.H)!="Sallary"])#
+best.lasso=mean((pred[,1]-H.test$Salary)^2)#
+train_matrix = model.matrix(Salary~., data=H2.train)#
+test_matrix = model.matrix(Salary~., data=H2.test)#
+salaries = H2.train$Salary#
+#
+fit = glmnet(x,y,alpha=1)#
+lasso_prediction = predict(fit, s=0.01, xhat=test_matrix)#
+best.lasso = mean((salaries - lasso_prediction)^2)#
+#compare the test MSEs#
+#
+boost_results#
+bestsub #
+best.lasso
+train_matrix = model.matrix(Salary~., data=H2.train)#
+test_matrix = model.matrix(Salary~., data=H2.test)#
+salaries = H2.train$Salary#
+#
+fit = glmnet(train_matrix,salaries,alpha=1)#
+lasso_prediction = predict(fit, s=0.01, xhat=test_matrix)#
+best.lasso = mean((salaries - lasso_prediction)^2)#
+#compare the test MSEs#
+#
+boost_results#
+bestsub #
+best.lasso
+train_matrix = model.matrix(Salary~., data=H2.train)#
+test_matrix = model.matrix(Salary~., data=H2.test)#
+salaries = H2.train$Salary#
+#
+fit = glmnet(train_matrix,salaries,alpha=1)#
+lasso_prediction = predict(fit, s=0.01, newx=test_matrix)#
+best.lasso = mean((salaries - lasso_prediction)^2)#
+#compare the test MSEs#
+#
+boost_results#
+bestsub #
+best.lasso
+train_matrix = model.matrix(Salary~., data=H2.train)#
+test_matrix = model.matrix(Salary~., data=H2.test)#
+salaries = H2.train$Salary#
+#
+fit = glmnet(train_matrix,salaries,alpha=1)#
+lasso_prediction = predict(fit, s=0.01, newx=test_matrix)#
+best.lasso = mean((lasso_prediction-salaries)^2)#
+#compare the test MSEs#
+#
+boost_results#
+bestsub #
+best.lasso
+(lasso_prediction-salaries)^2
+lasso_prediction
+length(lasso_prediction)
+length(salaries)
+library(glmnet)#
+#
+cols.bad=c("League","Division","NewLeague")#
+n.H=model.matrix(~.,H)[,-1]#
+n.H.train=n.H[1:200,]#
+n.H.test=n.H[201:nrow(n.H),]#
+#
+fit=cv.glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"])#
+fit=glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"],lambda=fit$lambda.1se)pred=predict(fit,n.H.test[,colnames(n.H)!="Sallary"])#
+best.lasso=mean((pred[,1]-H.test$Salary)^2)
+cols.bad=c("League","Division","NewLeague")#
+n.H=model.matrix(~.,H2)[,-1]#
+n.H.train=n.H[1:200,]#
+n.H.test=n.H[201:nrow(n.H),]#
+#
+fit=cv.glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"])#
+fit=glmnet(n.H.train[,colnames(n.H)!="Sallary"],n.H.train[,"Salary"],lambda=fit$lambda.1se)pred=predict(fit,n.H.test[,colnames(n.H)!="Sallary"])#
+best.lasso=mean((pred[,1]-H.test$Salary)^2)
+cols.bad=c("League","Division","NewLeague")#
+n.H=model.matrix(~.,H2)[,-1]#
+n.H.train=n.H[1:200,]#
+n.H.test=n.H[201:nrow(n.H),]#
+#
+fit=cv.glmnet(n.H.train[,colnames(n.H)!="Salary"],n.H.train[,"Salary"])#
+fit=glmnet(n.H.train[,colnames(n.H)!="Salary"],n.H.train[,"Salary"],lambda=fit$lambda.1se)pred=predict(fit,n.H.test[,colnames(n.H)!="Salary"])#
+best.lasso=mean((pred[,1]-H.test$Salary)^2)
+cols.bad=c("League","Division","NewLeague")#
+n.H=model.matrix(~.,H2)[,-1]#
+n.H.train=n.H[1:200,]#
+n.H.test=n.H[201:nrow(n.H),]#
+#
+fit=cv.glmnet(n.H.train[,colnames(n.H)!="Salary"],n.H.train[,"Salary"])#
+fit=glmnet(n.H.train[,colnames(n.H)!="Salary"],n.H.train[,"Salary"],lambda=fit$lambda.1se),pred=predict(fit,n.H.test[,colnames(n.H)!="Salary"])#
+best.lasso=mean((pred[,1]-H.test$Salary)^2)
+fit=glmnet(n.H.train[,colnames(n.H)!="Salary"],n.H.train[,"Salary"],lambda=fit$lambda.1se)pred=predict(fit,n.H.test[,colnames(n.H)!="Salary"])
+fit=cv.glmnet(n.H.train[,colnames(n.H)!="Salary"],n.H.train[,"Salary"])#
+fit=glmnet(n.H.train[,colnames(n.H)!="Salary"],n.H.train[,"Salary"],lambda=fit$lambda.1se)#
+pred=predict(fit,n.H.test[,colnames(n.H)!="Salary"])#
+best.lasso=mean((pred[,1]-H.test$Salary)^2)
+cols.bad=c("League","Division","NewLeague")#
+n.H=model.matrix(~.,H2)[,-1]#
+n.H.train=n.H[1:200,]#
+n.H.test=n.H[201:nrow(n.H),]#
+#
+fit=cv.glmnet(n.H.train[,colnames(n.H)!="Salary"],n.H.train[,"Salary"])#
+fit=glmnet(n.H.train[,colnames(n.H)!="Salary"],n.H.train[,"Salary"],lambda=fit$lambda.1se)#
+pred=predict(fit,n.H.test[,colnames(n.H)!="Salary"])#
+best.lasso=mean((pred[,1]-H2.test$Salary)^2)
+best.lasso
+eliminate=c("League","Division","NewLeague")#
+reformat=model.matrix(~.,H2)[,-1]#
+reformat.train=reformat[1:200,]#
+reformat.test=reformat[201:nrow(reformat),]#
+#
+fit_lasso=cv.glmnet(reformat.train[,colnames(reformat)!="Salary"],reformat.train[,"Salary"])#
+fit_lasso=glmnet(reformat.train[,colnames(reformat)!="Salary"],reformat.train[,"Salary"],lambda=fit$lambda.1se)#
+pred=predict(fit_lasso,reformat.test[,colnames(reformat)!="Salary"])#
+best.lasso=mean((pred[,1]-H2.test$Salary)^2)
+boost_results#
+bestsub #
+best.lasso
+library(leaps)#
+#
+placeholder = regsubsets(Salary~., data=H2.train, nvmax=19)#
+placeholder_s = summary(placeholder)#
+#
+a = placeholder_s$which[which.min(placeholder_s$cp),][2:20]#
+#
+names = c(names,"Division","Salary")#
+#
+placeholder.lm = lm(Salary~.,data=H2.train[,colnames(H2.train)%in%names])#
+subsetlm_prediction = predict(fit.lm,H.test[,colnames(H.train)%in%names])#
+bestsub = mean((subsetlm_prediction-H2.test$Salary)^2)
+library(leaps)#
+#
+placeholder = regsubsets(Salary~., data=H2.train, nvmax=19)#
+placeholder_s = summary(placeholder)#
+#
+a = placeholder_s$which[which.min(placeholder_s$cp),][2:20]#
+#
+names = c(names,"Division","Salary")#
+#
+placeholder.lm = lm(Salary~.,data=H2.train[,colnames(H2.train)%in%names])#
+subsetlm_prediction = predict(placeholder.lm,H.test[,colnames(H.train)%in%names])#
+bestsub = mean((subsetlm_prediction-H2.test$Salary)^2)
+library(leaps)#
+#
+placeholder = regsubsets(Salary~., data=H2.train, nvmax=19)#
+placeholder_s = summary(placeholder)#
+#
+a = placeholder_s$which[which.min(placeholder_s$cp),][2:20]#
+#
+names = c(names,"Division","Salary")#
+#
+placeholder.lm = lm(Salary~.,data=H2.train[,colnames(H2.train)%in%names])#
+subsetlm_prediction = predict(placeholder.lm,H2.test[,colnames(H.train)%in%names])#
+bestsub = mean((subsetlm_prediction-H2.test$Salary)^2)
+library(leaps)#
+#
+placeholder = regsubsets(Salary~., data=H2.train, nvmax=19)#
+placeholder_s = summary(placeholder)#
+#
+a = placeholder_s$which[which.min(placeholder_s$cp),][2:20]#
+#
+names = c(names,"Division","Salary")#
+#
+placeholder.lm = lm(Salary~.,data=H2.train[,colnames(H2.train)%in%names])#
+subsetlm_prediction = predict(placeholder.lm,H2.test[,colnames(H2.train)%in%names])#
+bestsub = mean((subsetlm_prediction-H2.test$Salary)^2)
+boost_results#
+bestsub #
+best.lasso
+boost_hitters_test = gbm(Salary~., data=H2.train, distribution="gaussian", n.trees=1000, shrink.lambdas = shrink.lambdas[which.min(training_error)], interaction.depth=1, n.cores=10)#
+#
+summary(boost_hitters_test)
+boost_hitters_test = gbm(Salary~., data=H2.train, distribution="gaussian", n.trees=1000, shrinkage = shrink.lambdas[which.min(training_error)], interaction.depth=1, n.cores=10)#
+#
+summary(boost_hitters_test)
+library(randomForest)#
+set.seed(1)#
+#
+bagging_hitters = randomForest(Salary~.,data=H2.train, mtry=ncol(H2.train)-1, importance=TRUE)#
+#ntree=500#
+#mtry=19#
+#
+prediction_bag = predict(bagging_hitters,newdata=H2.test)#
+mean((prediction_bag-H2.test$Salary)^2)
+Use the package installer and be sure to install all dependencies#
+library(ISLR)#
+library(e1071)
+setwd("~/Dropbox/SIPA/Data Mining/hw06")
+library(e1071)
+data("OJ")#
+OJ#
+set.seed(1)#
+#
+rownumbers = sample(nrow(OJ))#
+train_set = OJ[rownumbers[1:800],]#
+test_set = OJ[-rownumbers[1:800],]#
+#
+dim(train_set)#
+dim(test_set)
+Purchase = train_set[,1]#
+#
+training = data.frame(x=train_set[,-1], y=Purchase)#
+svm_train = svm(y~.,data=training, kernel="linear", cost=0.01, scale=TRUE)#
+summary(svm_train)
+??svm
+??svm
+test = data.frame(x=test_set[,-1],y=test_set[,1])#
+svm_test = svm(y~.,data=test, kernel="linear", cost=0.01, scale=TRUE)#
+train_predict = predict(svm_train,train)#
+test_predict = predict(svm_test,test)#
+train_error = sum(train_predict!=train_set[,1])/length(train_predict)#
+test_error = sum(test_predict!=test_set[,1])/length(test_predict)#
+train_error#
+test_error
+test = data.frame(x=test_set[,-1],y=test_set[,1])#
+svm_test = svm(y~.,data=test, kernel="linear", cost=0.01, scale=TRUE)#
+train_predict = predict(svm_train,training)#
+test_predict = predict(svm_test,test)#
+train_error = sum(train_predict!=train_set[,1])/length(train_predict)#
+test_error = sum(test_predict!=test_set[,1])/length(test_predict)#
+train_error#
+test_error
+tune.out = tune(svm_train, y~., data=train, kernel="linear", ranges=list(cost=seq(0.01,10)))
+tune.out = tune(svm_train, y~., data=training, kernel="linear", ranges=list(cost=seq(0.01,10)))
+help(tune)
+tune.out = tune(svm_train, y~., data=training, kernel="linear")
+svm_train_radial = svm(y~.,data=training, kernel="radial", cost=0.01, scale=TRUE)#
+svm_test_radial = svm(y~.,data=test, kernel="radial", cost=0.01, scale=TRUE)#
+#
+train_predict_radial = predict(svm_train_radial,train)#
+test_predict_radial = predict(svm_test_radial,test)#
+#
+train_error_radial = sum(train_predict_radial!=train_set[,1])/length(train_predict_radial)#
+test_error_radial = sum(test_predict_radial!=test_set[,1])/length(test_predict_radial)#
+train_error_radial#
+test_error_radial
+svm_train_radial = svm(y~.,data=training, kernel="radial", cost=0.01, scale=TRUE)#
+svm_test_radial = svm(y~.,data=test, kernel="radial", cost=0.01, scale=TRUE)#
+#
+train_predict_radial = predict(svm_train_radial,training)#
+test_predict_radial = predict(svm_test_radial,test)#
+#
+train_error_radial = sum(train_predict_radial!=train_set[,1])/length(train_predict_radial)#
+test_error_radial = sum(test_predict_radial!=test_set[,1])/length(test_predict_radial)#
+train_error_radial#
+test_error_radial
+summary(svm_train_radial)
+summary(svm_train_poly)#
+train_error_poly#
+test_error_poly
+svm_train_poly = svm(y~.,data=training, kernel="polynomial", cost=0.01, scale=TRUE, degree=2)#
+svm_test_poly = svm(y~.,data=test, kernel="polynomial", cost=0.01, scale=TRUE, degree=2)#
+#
+train_predict_poly = predict(svm_train_poly,training)#
+test_predict_poly = predict(svm_test_poly,test)#
+#
+train_error_poly = sum(train_predict_poly!=train_set[,1])/length(train_predict_poly)#
+test_error_poly = sum(test_predict_poly!=test_set[,1])/length(test_predict_poly)#
+#
+summary(svm_train_poly)#
+train_error_poly#
+test_error_poly
+training = data.frame(x=x.train[,1:100],y=y.train)#
+testing = data.frame(x=x.test[,1:100],y=y.test)#
+#
+svm_1 = svm(y~.,data=training, kernel="linear", cost=10, scale=FALSE)#
+#
+test_prediction = predict(svm_1,testing)
+test_prediction
+testing
+testing$y
+test_prediction==testing$y
+sum(test_prediction==testing$y)
+test_prediction = predict(svm_1,testing)#
+test_prediction#
+testing#
+sum(test_prediction==testing$y)
+test_prediction = predict(svm_1,testing)#
+test_prediction#
+testing$y#
+sum(test_prediction==testing$y)
+a = seq(from=5, to=100, by=5)#
+#
+train_errors = rep(NA,20)#
+test_errors = rep(NA,20)#
+#
+for(i in 1:20) {#
+	training_data = data.frame(x.train[,1:a[i]],y=y.train)#
+	testing_data = data.frame(x=x.test[,1:a[i]], y=y.test)#
+	train_prediction.1 = predict(svm_1,training_data)#
+	test_prediction.1 = predict(svm_1,testing_data)#
+	train_errors[i] = sum(train_prediction.1!=y.test)/length(train_prediction.1)#
+	test_errors[i] = sum(test_prediction.1!=y.test)/length(test_prediction.1)#
+}#
+#
+plot(a, test_errors, col="green", pch=5, type="b", xlab="# Words", ylab="Test Error")
+for(i in 1:20) {#
+	training_data = data.frame(x=x.train[,1:a[i]],y=y.train)#
+	testing_data = data.frame(x=x.test[,1:a[i]], y=y.test)#
+	train_prediction.1 = predict(svm_1,training_data)#
+	test_prediction.1 = predict(svm_1,testing_data)#
+	train_errors[i] = sum(train_prediction.1!=y.test)/length(train_prediction.1)#
+	test_errors[i] = sum(test_prediction.1!=y.test)/length(test_prediction.1)#
+}#
+#
+plot(a, test_errors, col="green", pch=5, type="b", xlab="# Words", ylab="Test Error")
+for(i in 1:20) {#
+	training_data = data.frame(x.train[,1:a[i]],y.train)#
+	testing_data = data.frame(x.test[,1:a[i]], y.test)#
+	train_prediction.1 = predict(svm_1,training_data)#
+	test_prediction.1 = predict(svm_1,testing_data)#
+	train_errors[i] = sum(train_prediction.1!=y.test)/length(train_prediction.1)#
+	test_errors[i] = sum(test_prediction.1!=y.test)/length(test_prediction.1)#
+}#
+#
+plot(a, test_errors, col="green", pch=5, type="b", xlab="# Words", ylab="Test Error")
+svm_2 = svm(y~.,data=training, kernel="radial", cost=10, scale=FALSE)#
+#
+a = seq(from=5, to=100, by=5)#
+#
+train_errors = rep(NA,20)#
+test_errors = rep(NA,20)#
+#
+for(i in 1:20) {#
+	training_data = data.frame(x.train[,1:a[i]],y=y.train)#
+	testing_data = data.frame(x=x.test[,1:a[i]], y=y.test)#
+	train_prediction.2 = predict(svm_2,training_data)#
+	test_prediction.2 = predict(svm_2,testing_data)#
+	train_errors[i] = sum(train_prediction.2!=y.test)/length(train_prediction.2)#
+	test_errors[i] = sum(test_prediction.2!=y.test)/length(test_prediction.2)#
+}#
+#
+plot(a, test_errors, col="green", pch=5, type="b", xlab="# Words", ylab="Test Error")
+features = c("upon", "depart")#
+#
+features_training = data.frame(x=xtrain[,features],y=y.train)#
+#
+svm_features = svm(y~., data=features_training, kernel="radial", cost=10, scale=FALSE)#
+plot(svm_features,x.train[,part])
+center and scale the data as in HW05#
+mean.train <- apply(dat.train[,-4876], 2, mean)		# col means of training x#
+sd.train <- apply(dat.train[,-4876], 2, sd)			# col sd of training x#
+#
+x.train <- scale(dat.train[,-4876])					# standardize training x#
+x.train[,sd.train==0] <- 0							# let the var be 0 if its sd=0#
+#
+x.test <- scale(dat.test[,-4876], center = mean.train, scale=sd.train)		# use training x mean & sd to standardize test x#
+x.test[,sd.train==0] <- 0							# let the var be 0 if its sd=0#
+#
+y.train <-dat.train$y#
+y.test <- dat.test$y
+a = seq(from=5, to=100, by=5)#
+#
+train_errors = rep(NA,20)#
+test_errors = rep(NA,20)#
+#
+for(i in 1:20) {#
+	training_data = data.frame(x=x.train[,1:a[i]],y=y.train)#
+	testing_data = data.frame(x=x.test[,1:a[i]], y=y.test)#
+	train_prediction.1 = predict(svm_1,training_data)#
+	test_prediction.1 = predict(svm_1,testing_data)#
+	train_errors[i] = sum(train_prediction.1!=y.test)/length(train_prediction.1)#
+	test_errors[i] = sum(test_prediction.1!=y.test)/length(test_prediction.1)#
+}#
+#
+plot(a, test_errors, col="green", pch=5, type="b", xlab="# Words", ylab="Test Error")
+a = seq(from=5, to=100, by=5)#
+#
+train_errors = rep(NA,20)#
+test_errors = rep(NA,20)#
+#
+for(i in 1:20) {#
+	training_data = data.frame(x=x.train[,1:a[i]],y=y.train)#
+	testing_data = data.frame(x=x.test[,1:a[i]], y=y.test)#
+	train_prediction.1 = predict(svm_1,training_data)#
+	test_prediction.1 = predict(svm_1,testing_data)#
+	train_errors[i] = sum(train_prediction.1!=y.test)/length(train_prediction.1)#
+	test_errors[i] = sum(test_prediction.1!=y.test)/length(test_prediction.1)#
+}#
+#
+plot(a, test_errors, col="green", pch=5, type="b", xlab="# Words", ylab="Test Error")
+Your code here#
+a=c(1:100)#
+b=c(4876)#
+dat.train=data.frame(x=x.train[,1:100],y=y.train)#
+svmfit=svm(y~.,data=dat.train,kernel="linear",cost=10,scale=FALSE)#
+dat.test=data.frame(x=x.test[,1:100],y=y.test)#
+pred.test=predict(svmfit,dat.test)#
+############
+# Part b#
+############
+sequence=seq(from=5,to=100,by=5)#
+train.errors = rep(NA, 20)#
+test.errors = rep(NA, 20)#
+for (i in 1:20){#
+  dat.train=data.frame(x=x.train[,1:sequence[i]],y=y.train)#
+  svmfit=svm(y~.,data=dat.train,kernel="linear",cost=10,scale=FALSE)#
+  dat.test=data.frame(x=x.test[,1:sequence[i]],y=y.test)#
+  pred.train=predict(svmfit,dat.train)#
+  pred.test=predict(svmfit,dat.test)#
+  train.errors[i] = sum(pred.train!=y.train)/length(pred.train)#
+  train.errors#
+  test.errors[i] = sum(pred.test!=y.test)/length(pred.test)#
+}#
+plot(sequence, test.errors, type="b", xlab="number of words", ylab="Test Error", col="blue", pch=20)
+a = seq(from=5, to=100, by=5)#
+#
+train_errors = rep(NA,20)#
+test_errors = rep(NA,20)#
+#
+for(i in 1:20) {#
+	training_data = data.frame(x=x.train[,1:a[i]],y=y.train)#
+	svm_1 = svm(y~.,data=training, kernel="linear", cost=10, scale=FALSE)#
+	testing_data = data.frame(x=x.test[,1:a[i]], y=y.test)#
+	train_prediction.1 = predict(svm_1,training_data)#
+	test_prediction.1 = predict(svm_1,testing_data)#
+	train_errors[i] = sum(train_prediction.1!=y.test)/length(train_prediction.1)#
+	test_errors[i] = sum(test_prediction.1!=y.test)/length(test_prediction.1)#
+}#
+#
+plot(a, test_errors, col="green", pch=5, type="b", xlab="# Words", ylab="Test Error")
+a = seq(from=5, to=100, by=5)#
+#
+train_errors = rep(NA,20)#
+test_errors = rep(NA,20)#
+#
+for(i in 1:20) {#
+	training_data = data.frame(x=x.train[,1:a[i]],y=y.train)#
+	svm_1 = svm(y~.,data=training, kernel="linear", cost=10, scale=FALSE)#
+	testing_data = data.frame(x=x.test[,1:a[i]], y=y.test)#
+	train_prediction = predict(svm_1,training_data)#
+	test_prediction = predict(svm_1,testing_data)#
+	train_errors[i] = sum(train_prediction!=y.test)/length(train_prediction)#
+	train_errors#
+	test_errors[i] = sum(test_prediction!=y.test)/length(test_prediction)#
+}#
+#
+plot(a, test_errors, col="green", pch=5, type="b", xlab="# Words", ylab="Test Error")
+sequence=seq(from=5,to=100,by=5)#
+train.errors = rep(NA, 20)#
+test.errors = rep(NA, 20)#
+for (i in 1:20){#
+  dat.train=data.frame(x=x.train[,1:sequence[i]],y=y.train)#
+  svmfit=svm(y~.,data=dat.train,kernel="linear",cost=10,scale=FALSE)#
+  dat.test=data.frame(x=x.test[,1:sequence[i]],y=y.test)#
+  pred.train=predict(svmfit,dat.train)#
+  pred.test=predict(svmfit,dat.test)#
+  train.errors[i] = sum(pred.train!=y.train)/length(pred.train)#
+  train.errors#
+  test.errors[i] = sum(pred.test!=y.test)/length(pred.test)#
+}#
+plot(sequence, test.errors, type="b", xlab="# Words", ylab="Test Error", col="blue", pch=5)
+plot(sequence, test.errors, type="b", xlab="# Words", ylab="Test Error", col="green", pch=5)
+Your code here#
+sequence=seq(from=5,to=100,by=5)#
+train.errors = rep(NA, 20)#
+test.errors = rep(NA, 20)#
+for (i in 1:20){#
+  dat.train = data.frame(x=x.train[,1:sequence[i]],y=y.train)#
+  svmfit = svm(y~.,data=dat.train,kernel="radial",cost=10,scale=FALSE)#
+  dat.test = data.frame(x=x.test[,1:sequence[i]],y=y.test)#
+  pred.train = predict(svmfit,dat.train)#
+  pred.test = predict(svmfit,dat.test)#
+  train.errors[i] = sum(pred.train!=y.train)/length(pred.train)#
+  train.errors#
+  test.errors[i] = sum(pred.test!=y.test)/length(pred.test)#
+}#
+plot(sequence, test.errors, type="b", xlab="# Words", ylab="Test Error", col="red", pch=5)
+features = c("upon", "depart")#
+#
+features_training = data.frame(x=xtrain[,features],y=y.train)#
+#
+svm_features = svm(y~., data=features_training, kernel="radial", cost=10, scale=FALSE)#
+plot(svm_features,x.train[,part])
+features = c("upon", "depart")#
+#
+features_training = data.frame(x=x.train[,features],y=y.train)#
+#
+svm_features = svm(y~., data=features_training, kernel="radial", cost=10, scale=FALSE)#
+plot(svm_features,x.train[,part])
+features = c("upon", "depart")#
+#
+features_training = data.frame(x=x.train[,features],y=y.train)#
+#
+svm_features = svm(y~., data=features_training, kernel="radial", cost=10, scale=FALSE)#
+plot(svm_features,x.train[,features])
+part = c("upon", "depart")#
+x.train.sub = x.train[,part]#
+dat.train.part=data.frame(x=x.train.sub,y=y.train)#
+svmfit.part = svm(y~.,data=dat.train.part,kernel="radial",cost=10,scale=FALSE)#
+plot(svmfit.part,x.train.sub)
+features = c("upon", "depart")#
+#
+features_training = data.frame(x=x.train[,features],y=y.train)#
+#
+svm_features = svm(y~., data=features_training, kernel="radial", cost=10, scale=FALSE)#
+plot(svm_features, x.train[,features])
+help(plot.svm)
+with(svm_features,plot("upon"~"depart"))
+with(svm_features,plot(x.train[,features]))

@@ -1,0 +1,1948 @@
+print('hello world')
+getwd()
+ls()
+a = 29#
+class(a)#
+b = as(a, "integer")#
+b#
+class(b)#
+c = as(a, "character")#
+c#
+class(c)
+b="ch"#
+class(b)#
+c=FALSE#
+class(c)#
+c=c("log", "ic", "al")#
+c#
+class(c)#
+c[2]#
+b[2]#
+b[1]
+a=c(1,3,5)#
+class(a)#
+a#
+a[2]#
+a[3]#
+a[1]#
+a.vec=c(1,3,5)#
+a[2]=67#
+a
+b=as(a,"integer")#
+b#
+b[2]=67.1#
+b
+class(b)
+b[3]="hello"#
+b
+class(b)
+Z=matrix(c(1,2,3,11,12,13))#
+z=c(1,2,3,11,12,13)#
+z[4]
+Z
+Z[4,1]
+z[4,1]
+Z=matrix(c(1,2,3,11,12,13), nrow=2, ncol=3)
+Z
+Z[2,3]
+Z=matrix(c(1,2,3,11,12,13), nrow=2, ncol=3, byrow=TRUE)
+Z
+Z=matrix(c(1,2,3,11,12,13), nrow=2, ncol=3, byrow=TRUE, dimnames=list(c("r1", "r2"), c("c1","c2", "c3")))
+Z
+Z[2,]
+z=1:10
+z=1:10#
+z=seq(1,10,2)#
+z=1:10#
+#
+dim(z)=c(5,2)
+z
+z=list(1:10)#
+z#
+length(z)#
+z[1]
+z=list(1:10)#
+z#
+length(z)#
+z[1]#
+y=z[[1]]#
+y
+Y=cbind(c(1,2,3), c(4,5,6))
+Y
+Y=cbind(c(1,2,3), c(4,5,6))#
+Y#
+Y=rbind(c(1,2,3), c(4,5,6))#
+Y
+YY=Y*Y
+YY
+W=cbind(c(3,4,6,7), c(1,1,1,1))#
+W
+Z
+WZ = W %*% Z
+WZ
+t(Z)
+WZ %*% Z
+WZ %*% t(Z)
+names = c("phyllis", "feihan", "evan")#
+test1 = c(95,85,92)#
+names#
+test1#
+test2 = c(92,88,99)#
+names#
+rm(names)#
+names#
+names(Z)
+scores
+scores=data.frame(fullnames=c("phyllis","feihan","evan"), t1=test1, t2=test2)
+scores
+names(scores)
+scores$fullnames
+scores$t1
+class(scores$fullnames)
+data=c(1,2,2,3,1,2,3,3,1,2,3,1)#
+data
+fdata=factor(data)#
+fdata
+rdata=factor(data, labels=c("I","II", "III"))#
+rdata
+rdata=factor(data, labels=c("survive","death", "ill"))
+rdata
+fdata
+ls()
+Z
+myarray=array(seq(1,48,2), dimc(3,4,2))
+myarray=array(seq(1,48,2), dim=c(3,4,2))
+myarray
+myarray=array(seq(1,24,2), dim=c(3,4,2))
+myarray
+myarray=array(seq(1,24,1), dim=c(3,4,2))
+myarray
+myarray[2,4,2]
+myarray
+myarray[2,4,2]=TRUE
+myarray
+xx=FALSE#
+!xx
+rm(xx)
+rm(x)
+mean(x=1:10)
+x
+install.packages("pixmap")
+setwd("~/Dropbox/SIPA/Data Mining/HW3")#
+# first include the relevant libraries#
+# note that a loading error might mean that you have to#
+# install the package into your R distribution.  #
+library(pixmap)#
+##################
+# Problem 4a#
+##################
+views_4a = c('P00A+000E+00', 'P00A+005E+10', 'P00A+005E-10', 'P00A+010E+00' )#
+# load the data and save it as a matrix with the name face_matrix_4a#
+#----- START YOUR CODE BLOCK HERE -----##
+library(pixmap)#
+setwd("C:/Climate and Society/Semester 2/Data Mining/R Directory")#
+dir_list_1 = dir(path="CroppedYale/",all.files=FALSE)#
+# the list of pictures (note the absence of 14 means that 31 corresponds to yaleB32)#
+# the list of pictures (note the absence of 14 means that 31 corresponds to yaleB32)#
+pic_list = 1:38#
+view_list = c(  'P00A+000E+00', 'P00A+005E+10' , 'P00A+005E-10' , 'P00A+010E+00')#
+##################
+# # Problem 2a#
+##################
+# preallocate an empty list#
+pic_data = vector("list",length(pic_list)*length(view_list))#
+# preallocate an empty list to store the pgm for debugging#
+pic_data_pgm = vector("list",length(pic_list)*length(view_list))#
+# outer loop through the pictures #
+for ( i in 1:length(pic_list) ){#
+	# inner loop over views#
+	for ( j in 1:length(view_list) ){#
+		# compile the correct file name#
+		# note that dir_list_1[pic_list[2]] should be "yaleB17" if pic_list[2] is B17#
+		this_filename = sprintf("CroppedYale/%s/%s_%s.pgm", dir_list_1[pic_list[i]] , dir_list_1[pic_list[i]] , view_list[j])#
+		# you can print out each name to help debug the code#
+		# print(this_filename)#
+		# load the data#
+		this_face = read.pnm(file = this_filename)#
+		this_face_matrix = getChannels(this_face)#
+		if((i==1)&&(j==1)){ # Preallocate matrix to store picture vectors, store sizes for computations#
+			original_size = dim(this_face_matrix)#
+			pic_vector_length = prod(original_size)#
+			pic_mat = mat.or.vec(length(pic_list)*length(view_list),pic_vector_length)#
+		}#
+		# store pgm as element of the list#
+		pic_data_pgm[[(i-1)*length(view_list)+j]] = this_face#
+		# store matrix as element of the list#
+		pic_data[[(i-1)*length(view_list)+j]] = this_face_matrix#
+		# make the face into a vector and include in the data matrix#
+		pic_mat[(i-1)*length(view_list)+j,] =  as.vector(this_face_matrix)#
+		# if you would like to plot each picture, run the following:#
+		#Sys.sleep(0.5)#
+		#plot(this_face)#
+	}	#
+}#
+pic_mat_size = dim(pic_mat)#
+# print the result in a nice format#
+print(sprintf('The matrix of all faces has size %d by %d' , pic_mat_size[1] , pic_mat_size[2] ))#
+subject_no=rep(1:38, each = 4)#
+subject=as.matrix(subject_no,ncol=1,byrow=T)#
+view_no=rep(1:4, each = 1, times = 38)#
+view=as.matrix(subject_no,ncol=1,byrow=T)#
+#dim(view)#
+#[1] 152   1#
+#dim(subject)#
+#[1] 152   1#
+face_matrix_4a=data.frame(cbind(pic_mat,subject,view))#
+#dim(face_matrix_4a)#
+#[1]   152 32258#
+#----- END YOUR CODE BLOCK HERE -----##
+# Get the size of the matrix for use later#
+fm_4a_size = dim(face_matrix_4a)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4a = floor(fm_4a_size[1]*4/5) # Number of training obs#
+ntest_4a = fm_4a_size[1]-ntrain_4a # Number of testing obs#
+set.seed(1) # Set pseudo-random numbers so everyone gets the same output#
+ind_train_4a = sample(1:fm_4a_size[1],ntrain_4a) # Training indices#
+ind_test_4a = c(1:fm_4a_size[1])[-ind_train_4a] # Testing indices#
+#----- START YOUR CODE BLOCK HERE -----##
+#files_train=ind_train_4a[1:5,c('subject', 'view')]#
+#new=face_matrix_4a[face_matrix_4a$subject %in% ind_train_4a,]#
+#new2=subset(face_matrix_4a,subject==ind_train_4a))#
+train.1=face_matrix_4a[ind_train_4a,]#
+test.1=face_matrix_4a[ind_test_4a,]#
+train.1.subset=train.1[1:5,32257:32258]#
+train.1.subset#
+32257 X32258#
+12       3      4#
+6        2      2#
+97      25      1#
+139     35      3#
+89      23      1#
+test.1.subset=test.1[,1:32256]#
+test.1.subset#
+2257 X32258#
+5       2      1#
+12      3      4#
+18      5      2#
+20      5      4#
+21      6      1#
+train.x=train.1[,1:32256]#
+train.x#
+         X100      X101      X102      X103      X104#
+149 0.3294118 0.3333333 0.3294118 0.3215686 0.3254902#
+15  0.3294118 0.3372549 0.3333333 0.3176471 0.3215686#
+116 0.4313725 0.4431373 0.4392157 0.4235294 0.4274510#
+82  0.2196078 0.2196078 0.2156863 0.2000000 0.1960784#
+144 0.4549020 0.4549020 0.4627451 0.4823529 0.4431373#
+44  0.5568627 0.5607843 0.5529412 0.5647059 0.5647059#
+59  0.5137255 0.5176471 0.5294118 0.5333333 0.5450980#
+65  0.4117647 0.4078431 0.4156863 0.4117647 0.4117647#
+137 0.4705882 0.4627451 0.4745098 0.4705882 0.4588235#
+test.x=test.1[,1:32256]#
+test.x#
+         X100      X101      X102      X103      X104#
+76  0.4470588 0.4431373 0.4588235 0.4627451 0.4666667#
+78  0.5686275 0.5490196 0.5529412 0.5490196 0.5411765#
+94  0.2980392 0.3019608 0.3098039 0.3137255 0.3098039#
+95  0.3411765 0.3490196 0.3568627 0.3568627 0.3411765#
+99  0.4980392 0.4980392 0.5058824 0.5058824 0.4901961#
+106 0.4392157 0.4392157 0.4431373 0.4392157 0.4352941#
+mean_training = colMeans(train.x)#
+dim.training=dim(as.matrix(train.x))#
+dim.training#
+[1] 121 32256#
+dim(as.matrix(train.x))#
+dim.test=dim(as.matrix(test.x))#
+dim.test=dim(as.matrix(test.x))#
+mean_test=colMeans(test.x)#
+mean.3=mean_test#
+dim(as.matrix(mean.3))#
+# Now print it as a picture#
+mean.2 = mean_training#
+dim(as.matrix(mean.2))#
+[1] 32256 1#
+adjusted.training=mat.or.vec(mean.dim[1],mean.dim[2])#
+# 32256 1#
+#dim(mean.2) = original_size#
+#mean_face_pix = pixmapGrey(mean_face_mat)#
+#plot(mean_face_pix)#
+# And save the picture#
+#filename = 'hw02_02b.png'#
+#dev.copy(device=png, file=filename, height=600, width=800)#
+#dev.off()#
+dim(t(as.matrix(train.x[1,])))#
+[1] 1 5#
+train.x2=t(train.x)#
+# Subtract off the mean face#
+pic_mat_centered = mat.or.vec(dim.training[1],dim.training[2])#
+# I am using a loop, but one could use apply()#
+for (i in 1:dim.training[1]){#
+	pic_mat_centered[i,] = t(as.matrix(train.x[i,])) - mean.2#
+}#
+dim(as.matrix(pic_mat_centered))#
+[1]   121 32256#
+data_centred=pic_mat_centered#
+prc1=prcomp(data_centred)#
+prc1.x=prc1$rotation#
+prc.use=prc1.x[,1:25]#
+dim(as.matrix(prc.use))#
+#[1] 32256    25#
+prc.s=prc1$x#
+dim(as.matrix(prc.s))#
+//   For getting test_data_centered#
+pic_mat_centered_test = mat.or.vec(dim.test[1],dim.test[2])#
+for (i in 1:dim.test[1]){#
+	pic_mat_centered_test[i,] = t(as.matrix(test.x[i,])) - mean.2#
+}#
+dim(as.matrix(pic_mat_centered_test))#
+[1]    31 32256#
+data_centred2=pic_mat_centered_test#
+prc2=prcomp(data_centred2)#
+prc2.x=prc2$rotation#
+prc2.use=prc2.x[,1]#
+dim(as.matrix(prc2.use))#
+[1] 32256     1#
+///////////////////////////                       For Projecting           ///////////////////////////#
+first=NULL#
+for ( i in 1:31){#
+second=NULL#
+for ( j in 1:25){#
+score=pic_mat_centered_test[i,] %*% prc.use[,j]#
+#cb=as.vector(score)#
+# append the view to the row for this face#
+second = cbind( second , score )#
+doit=second#
+}#
+# append the latest row to the face_matrix#
+first = rbind( first , doit )#
+}#
+first2=NULL#
+for ( i in 1:121){#
+second2=NULL#
+for ( j in 1:25){#
+score2=pic_mat_centered[i,] %*% prc.use[,j]#
+#cb=as.vector(score)#
+# append the view to the row for this face#
+second2 = cbind( second2 , score2 )#
+doit2=second2#
+}#
+# append the latest row to the face_matrix#
+first2 = rbind( first2 , doit2 )#
+}#
+dim(as.matrix(first2))#
+[1] 121  25#
+dim(as.matrix(first))#
+[1] 31 25#
+indicator =c(11,15,22,34,8,34,35,24,23,3,37,7,27,14,27,18,25,34,13,26,31,7,22,5,9,13,1,12,27,11,15,19,15,6,38,20,24,4,21,12,23,18,22,16,15,33,1,34,20,38,13,28,11,36,2,3,8,32,16,10,21,7,31,36,33,30,23,17,2,51,33,17,21,36,29,35,37,23,22,18,8,27,20,26,13,4,39,28,11,35,4,1,10,21,12,19,7,37,25,9,32,5,17,26,37,3,2,6,38,14,35,32,16,33,38,1,11,28,16,12,26)#
+indicator_v=factor(indicator)#
+for i in 1:121{#
+if (floor((ind_train_4a[i])/4) < 1) indicator[i]=1#
+else {#
+indicator[i]=floor((ind_train_4a[i])/4)#
+}#
+}#
+i=as.matrix(indicator)#
+ dim(i)#
+[1] 121   1#
+a=vec[indicator]#
+// These lines were not working for hours. I restarted and it worked.#
+indicator_v=factor(indicator)#
+result=knn(first2,first,indicator_v,k=1)#
+result
+library(class)
+indicator_v=factor(indicator)#
+result=knn(first2,first,indicator_v,k=1)
+result
+indicator_v
+result!=indicator_v
+Y.test_hat!=a
+Y.test_hat <- knn(trainingset, testingset, a, k=1)
+Y.test_hat!=a
+indicator =c(11,15,22,34,8,34,35,24,23,3,37,7,27,14,27,18,25,34,13,26,31,7,22,5,9,13,1,12,27,11,15,19,15,6,38,20,24,4,21,12,23,18,22,16,15,33,1,34,20,38,13,28,11,36,2,3,8,32,16,10,21,7,31,36,33,30,23,17,2,51,33,17,21,36,29,35,37,23,22,18,8,27,20,26,13,4,39,28,11,35,4,1,10,21,12,19,7,37,25,9,32,5,17,26,37,3,2,6,38,14,35,32,16,33,38,1,11,28,16,12,26)#
+#
+a=factor(indicator)
+Y_test_hat <- knn(trainingset, testingset, a, k=1)
+the list of pictures#
+dir_list_1 = dir(path="CroppedYale/",all.files=FALSE)#
+views_4a = c('P00A+000E+00', 'P00A+005E+10', 'P00A+005E-10', 'P00A+010E+00' )#
+#
+# preallocate an empty list#
+this_face_row = vector()#
+# initialize an empty matrix of faces data#
+face_matrix_4a = vector()#
+pic_list = c( 01,02,03,04,05,06,07,08,09,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39)#
+#generating a matrix of photos of the 4 desired views#
+#
+for (i in 1:38) {#
+placeholder_matrix <- NULL#
+#
+for (j in 1:4) {#
+	filename= sprintf("CroppedYale/%s/%s_%s.pgm",dir_list_1[i],dir_list_1[i],views_4a[j])#
+print(filename)#
+face=read.pnm(file=filename)#
+pic_data <-getChannels(face)#
+pic_data_vec <- as.vector(pic_data)#
+placeholder_matrix=rbind(placeholder_matrix,c(pic_data_vec,i,j))#
+}#
+face_matrix_4a=rbind(face_matrix_4a,placeholder_matrix)#
+}#
+#
+dim(face_matrix_4a)#
+all_faces <- face_matrix_4a[,1:32256]#
+labelling <- face_matrix_4a[,32257:32258]#
+#----- END YOUR CODE BLOCK HERE -----##
+# Get the size of the matrix for use later#
+fm_4a_size = dim(face_matrix_4a)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4a = floor(fm_4a_size[1]*4/5) # Number of training obs#
+ntest_4a = fm_4a_size[1]-ntrain_4a # Number of testing obs#
+set.seed(1) # Set pseudo-random numbers so everyone gets the same output#
+ind_train_4a = sample(1:fm_4a_size[1],ntrain_4a) # Training indices#
+ind_test_4a = c(1:fm_4a_size[1])[-ind_train_4a] # Testing indices#
+ind_train_4a#
+ind_test_4a#
+#
+test_matrix=all_faces[c(5,12,18,20,21,24,29,34,36,37,40,53,55,65,70,75,76,78,94,95,99,106,114,115,117,118,120,122,126,143,150),]#
+dim(test_matrix)#
+#
+train_matrix=all_faces[-c(5,12,18,20,21,24,29,34,36,37,40,53,55,65,70,75,76,78,94,95,99,106,114,115,117,118,120,122,126,143,150),]#
+dim(train_matrix)#
+#
+test_id = labelling[c(5,12,18,20,21,24,29,34,36,37,40,53,55,65,70,75,76,78,94,95,99,106,114,115,117,118,120,122,126,143,150),]#
+dim(test_id)#
+#
+train_id = labelling[-c(5,12,18,20,21,24,29,34,36,37,40,53,55,65,70,75,76,78,94,95,99,106,114,115,117,118,120,122,126,143,150),]#
+dim(train_id)#
+#----- START YOUR CODE BLOCK HERE -----##
+#----- END YOUR CODE BLOCK HERE -----##
+##################
+# Problem 4b#
+##################
+#----- START YOUR CODE BLOCK HERE -----##
+#training data first#
+#
+mean_face <- colMeans(train_matrix)#
+means_mat=as.matrix(mean_face)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref=matrix(means_mat,192,168)#
+means_face=pixmapGrey(means_mat_ref)#
+plot(means_face)#
+pic_mat_size = dim(train_matrix)#
+pic_mat_centered = mat.or.vec(pic_mat_size[1],pic_mat_size[2])#
+#
+# I am using a loop, but one could use apply()#
+for (i in 1:pic_mat_size[1]){#
+	pic_mat_centered[i,] = train_matrix[i,] - mean_face#
+}#
+#
+dim(pic_mat_centered)#
+pca_results <- prcomp(pic_mat_centered)#
+#
+dim(pca_results)#
+#
+dim(as.matrix(loading_temp))#
+dim(pic_mat_centered)#
+num_comp_mod = length(pca_results$x[,1])#
+scores_query = mat.or.vec(num_comp_mod,1)#
+trainingset=NULL#
+for (i in 1:121){#
+	placeholder = NULL#
+for(j in 1:25){#
+	loading_temp = pca_results$rotation[,j]#
+	scores_query = pic_mat_centered[i,] %*% loading_temp  #
+	placeholder = cbind(placeholder,scores_query)#
+	}#
+	trainingset=rbind(trainingset,placeholder)#
+}#
+#
+dim(trainingset)#
+mean_face_test <- colMeans(test_matrix)#
+means_mat_test=as.matrix(mean_face_test)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test=matrix(means_mat_test,192,168)#
+means_face_test=pixmapGrey(means_mat_ref_test)#
+plot(means_face_test)#
+pic_mat_size_test = dim(test_matrix)#
+pic_mat_centered_test = mat.or.vec(pic_mat_size_test[1],pic_mat_size_test[2])#
+#
+# I am using a loop, but one could use apply()#
+for (i in 1:pic_mat_size_test[1]){#
+	pic_mat_centered_test[i,] = test_matrix[i,] - mean_face#
+}#
+#
+dim(pic_mat_centered_test)#
+pca_results_test <- prcomp(pic_mat_centered_test)#
+#
+dim(as.matrix(pca_results_test))#
+#
+dim(as.matrix(loading_temp_test))#
+dim(pic_mat_centered_test)#
+num_comp_mod_test = length(pca_results_test$x[,1])#
+scores_query_test = mat.or.vec(num_comp_mod_test,1)#
+testingset=NULL#
+for (i in 1:31){#
+	placeholder_test = NULL#
+for(j in 1:25){#
+	loading_temp_test = pca_results_test$rotation[,j] #note this is the same as training (I think it's supposed to be like this)#
+	scores_query_test = pic_mat_centered_test[i,] %*% loading_temp_test  #
+	placeholder_test = cbind(placeholder_test,scores_query_test)#
+	}#
+	testingset=rbind(testingset,placeholder_test)#
+}#
+#
+dim(testingset)#
+#this isn't working#
+#row.names(scores_query)#
+#
+#cl <- row.names(loading_temp)#
+#cl <- ind_train_4a#
+#names#
+#
+#ind_train_4a_31 <- ind_train_4a[1:31]#
+#ind_train_4a_31#
+#cl <- ind_train_4a_25#
+#this works?#
+cl <- row.names(data.frame(trainingset))#
+cl2 <- vector(c("11","15","22","34","8","34","35","24","23","3","37","7","27","14","27","18","25","34","13","26","31","7","22","5","9","13","1","12","27","11"))#
+15,19,15,6,38,20,24,4,21,12,23,18,22,16))#
+indicator =c(11,15,22,34,8,34,35,24,23,3,37,7,27,14,27,18,25,34,13,26,31,7,22,5,9,13,1,12,27,11,15,19,15,6,38,20,24,4,21,12,23,18,22,16,15,33,1,34,20,38,13,28,11,36,2,3,8,32,16,10,21,7,31,36,33,30,23,17,2,51,33,17,21,36,29,35,37,23,22,18,8,27,20,26,13,4,39,28,11,35,4,1,10,21,12,19,7,37,25,9,32,5,17,26,37,3,2,6,38,14,35,32,16,33,38,1,11,28,16,12,26)#
+#
+a=factor(indicator)#
+#
+length(cl)#
+cl#
+length(indicator)#
+Y_test_hat <- knn(trainingset, testingset, a, k=1)#
+Y_test_hat!=a
+sum(Y_test_hat!=a)
+result!=indicator_v
+sum(result!=indicator_v)
+cl <- row.names(data.frame(trainingset))
+Y_test_hat <- knn(trainingset, testingset, cl, k=1)
+Y_test_hat!=cl
+sum(Y_test_hat!=cl)
+cl3 <- row.names(data.frame(loading_temp_test))
+Y_test_hat <- knn(trainingset, testingset, cl3, k=1)
+length(cl3)
+cl3 <- row.names(factor(loading_temp_test))
+length(cl3)
+cl3 <- row.names((loading_temp_test))
+length(cl3)
+cl <- row.names(data.frame(trainingset))
+Y_test_hat <- knn(trainingset, testingset, cl, k=1)
+Y_test_hat!=cl
+cl3 <- row.names(data.frame(testingset))
+Y_test_hat <- knn(trainingset, testingset, cl3, k=1)
+the list of pictures#
+dir_list_1 = dir(path="CroppedYale/",all.files=FALSE)#
+views_4c = c('P00A-035E+15', 'P00A-050E+00', 'P00A+035E+15', 'P00A+050E+00')#
+#
+# preallocate an empty list#
+this_face_row = vector()#
+# initialize an empty matrix of faces data#
+face_matrix_4c = vector()#
+pic_list = c( 01,02,03,04,05,06,07,08,09,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39)#
+#generating a matrix of photos of the 4 desired views#
+#
+for (i in 1:38) {#
+placeholder_matrix <- NULL#
+#
+for (j in 1:4) {#
+	filename= sprintf("CroppedYale/%s/%s_%s.pgm",dir_list_1[i],dir_list_1[i],views_4c[j])#
+print(filename)#
+face=read.pnm(file=filename)#
+pic_data <-getChannels(face)#
+pic_data_vec <- as.vector(pic_data)#
+placeholder_matrix=rbind(placeholder_matrix,c(pic_data_vec,i,j))#
+}#
+face_matrix_4c=rbind(face_matrix_4c,placeholder_matrix)#
+}#
+#
+dim(face_matrix_4c)#
+all_faces <- face_matrix_4c[,1:32256]#
+labelling <- face_matrix_4c[,32257:32258]
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]
+ind_train_4c#
+ind_test_4c
+ind_train_4a#
+ind_test_4a
+test_matrix_4c=all_faces[ind_test_4c]
+dim(test_matrix_4c)
+test_matrix_4c=all_faces[c(ind_test_4c)]
+dim(test_matrix_4c)
+test_matrix_4c=all_faces[factor(ind_test_4c)]
+dim(test_matrix_4c)
+as.vector(ind_test_4a)
+the list of pictures#
+dir_list_1 = dir(path="CroppedYale/",all.files=FALSE)#
+views_4c = c('P00A-035E+15', 'P00A-050E+00', 'P00A+035E+15', 'P00A+050E+00')#
+#
+# preallocate an empty list#
+this_face_row = vector()#
+# initialize an empty matrix of faces data#
+face_matrix_4c = vector()#
+pic_list = c( 01,02,03,04,05,06,07,08,09,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39)#
+#generating a matrix of photos of the 4 desired views#
+#
+for (i in 1:38) {#
+placeholder_matrix <- NULL#
+#
+for (j in 1:4) {#
+	filename= sprintf("CroppedYale/%s/%s_%s.pgm",dir_list_1[i],dir_list_1[i],views_4c[j])#
+print(filename)#
+face=read.pnm(file=filename)#
+pic_data <-getChannels(face)#
+pic_data_vec <- as.vector(pic_data)#
+placeholder_matrix=rbind(placeholder_matrix,c(pic_data_vec,i,j))#
+}#
+face_matrix_4c=rbind(face_matrix_4c,placeholder_matrix)#
+}#
+#
+dim(face_matrix_4c)#
+all_faces_4c <- face_matrix_4c[,1:32256]#
+labelling_4c <- face_matrix_4c[,32257:32258]
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]
+ind_train_4c#
+ind_test_4c
+test_matrix_4c=all_faces_4c[ind_test_4c,]
+dim(test_matrix_4c)
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+dim(train_matrix_4c)
+test_id_4c = labelling_4c[ind_test_4c,]#
+dim(test_id_4c)#
+train_id_4c = labelling_4c[ind_train_4c,]#
+dim(train_id_4c)
+the list of pictures#
+dir_list_1 = dir(path="CroppedYale/",all.files=FALSE)#
+views_4a = c('P00A+000E+00', 'P00A+005E+10', 'P00A+005E-10', 'P00A+010E+00' )#
+#
+# preallocate an empty list#
+this_face_row = vector()#
+# initialize an empty matrix of faces data#
+face_matrix_4a = vector()#
+pic_list = c( 01,02,03,04,05,06,07,08,09,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39)#
+#generating a matrix of photos of the 4 desired views#
+#
+for (i in 1:38) {#
+placeholder_matrix <- NULL#
+#
+for (j in 1:4) {#
+	filename= sprintf("CroppedYale/%s/%s_%s.pgm",dir_list_1[i],dir_list_1[i],views_4a[j])#
+print(filename)#
+face=read.pnm(file=filename)#
+pic_data <-getChannels(face)#
+pic_data_vec <- as.vector(pic_data)#
+placeholder_matrix=rbind(placeholder_matrix,c(pic_data_vec,i,j))#
+}#
+face_matrix_4a=rbind(face_matrix_4a,placeholder_matrix)#
+}#
+#
+dim(face_matrix_4a)#
+all_faces <- face_matrix_4a[,1:32256]#
+labelling <- face_matrix_4a[,32257:32258]
+Get the size of the matrix for use later#
+fm_4a_size = dim(face_matrix_4a)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4a = floor(fm_4a_size[1]*4/5) # Number of training obs#
+ntest_4a = fm_4a_size[1]-ntrain_4a # Number of testing obs#
+set.seed(1) # Set pseudo-random numbers so everyone gets the same output#
+ind_train_4a = sample(1:fm_4a_size[1],ntrain_4a) # Training indices#
+ind_test_4a = c(1:fm_4a_size[1])[-ind_train_4a] # Testing indices
+test_matrix=all_faces[ind_test_4a,]#
+dim(test_matrix)#
+train_matrix=all_faces[ind_train_4a,]#
+dim(train_matrix)#
+test_id = labelling[ind_test_4a,]#
+dim(test_id)#
+train_id = labelling[ind_train_4a,]#
+dim(train_id)
+mean_face <- colMeans(train_matrix)#
+means_mat=as.matrix(mean_face)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref=matrix(means_mat,192,168)#
+means_face=pixmapGrey(means_mat_ref)#
+plot(means_face)#
+pic_mat_size = dim(train_matrix)#
+pic_mat_centered = mat.or.vec(pic_mat_size[1],pic_mat_size[2])#
+#
+# I am using a loop, but one could use apply()#
+for (i in 1:pic_mat_size[1]){#
+	pic_mat_centered[i,] = train_matrix[i,] - mean_face#
+}#
+#
+dim(pic_mat_centered)#
+pca_results <- prcomp(pic_mat_centered)#
+#
+dim(pca_results)#
+#
+dim(as.matrix(loading_temp))#
+dim(pic_mat_centered)#
+num_comp_mod = length(pca_results$x[,1])#
+scores_query = mat.or.vec(num_comp_mod,1)#
+trainingset=NULL#
+for (i in 1:121){#
+	placeholder = NULL#
+for(j in 1:25){#
+	loading_temp = pca_results$rotation[,j]#
+	scores_query = pic_mat_centered[i,] %*% loading_temp  #
+	placeholder = cbind(placeholder,scores_query)#
+	}#
+	trainingset=rbind(trainingset,placeholder)#
+}#
+#
+dim(trainingset)#
+mean_face_test <- colMeans(test_matrix)#
+means_mat_test=as.matrix(mean_face_test)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test=matrix(means_mat_test,192,168)#
+means_face_test=pixmapGrey(means_mat_ref_test)#
+plot(means_face_test)#
+pic_mat_size_test = dim(test_matrix)#
+pic_mat_centered_test = mat.or.vec(pic_mat_size_test[1],pic_mat_size_test[2])#
+#
+# I am using a loop, but one could use apply()#
+for (i in 1:pic_mat_size_test[1]){#
+	pic_mat_centered_test[i,] = test_matrix[i,] - mean_face#
+}#
+#
+dim(pic_mat_centered_test)#
+pca_results_test <- prcomp(pic_mat_centered_test)#
+#
+dim(as.matrix(pca_results_test))#
+#
+dim(as.matrix(loading_temp_test))#
+dim(pic_mat_centered_test)#
+num_comp_mod_test = length(pca_results_test$x[,1])#
+scores_query_test = mat.or.vec(num_comp_mod_test,1)#
+testingset=NULL#
+for (i in 1:31){#
+	placeholder_test = NULL#
+for(j in 1:25){#
+	loading_temp_test = pca_results_test$rotation[,j] #note this is the same as training (I think it's supposed to be like this)#
+	scores_query_test = pic_mat_centered_test[i,] %*% loading_temp_test  #
+	placeholder_test = cbind(placeholder_test,scores_query_test)#
+	}#
+	testingset=rbind(testingset,placeholder_test)#
+}#
+#
+dim(testingset)#
+#this isn't working#
+#row.names(scores_query)#
+#
+#cl <- row.names(loading_temp)#
+#cl <- ind_train_4a#
+#names#
+#
+#ind_train_4a_31 <- ind_train_4a[1:31]#
+#ind_train_4a_31#
+#cl <- ind_train_4a_25#
+#this works?#
+cl <- row.names(data.frame(trainingset))#
+cl2 <- vector(c("11","15","22","34","8","34","35","24","23","3","37","7","27","14","27","18","25","34","13","26","31","7","22","5","9","13","1","12","27","11"))#
+15,19,15,6,38,20,24,4,21,12,23,18,22,16))#
+#
+cl3 <- row.names(data.frame(testingset))#
+indicator =c(11,15,22,34,8,34,35,24,23,3,37,7,27,14,27,18,25,34,13,26,31,7,22,5,9,13,1,12,27,11,15,19,15,6,38,20,24,4,21,12,23,18,22,16,15,33,1,34,20,38,13,28,11,36,2,3,8,32,16,10,21,7,31,36,33,30,23,17,2,51,33,17,21,36,29,35,37,23,22,18,8,27,20,26,13,4,39,28,11,35,4,1,10,21,12,19,7,37,25,9,32,5,17,26,37,3,2,6,38,14,35,32,16,33,38,1,11,28,16,12,26)#
+#
+a=factor(indicator)#
+#
+length(cl3)#
+cl#
+Y_test_hat <- knn(trainingset, testingset, cl, k=1)#
+length(indicator)#
+Y_test_hat <- knn(trainingset, testingset, cl3, k=1)#
+Y_test_hat!=cl#
+#
+sum(Y_test_hat!=cl)
+Y_test_hat <- knn(trainingset, testingset, a, k=1)
+Y_test_hat!=a
+cl <- row.names(data.frame(trainingset))
+Y_test_hat <- knn(trainingset, testingset, cl, k=1)
+Y_test_hat!=cl
+ind_train_4c#
+ind_test_4c#
+#
+test_matrix_4c=all_faces_4c[ind_test_4c,]#
+dim(test_matrix_4c)#
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+dim(train_matrix_4c)#
+test_id_4c = labelling_4c[ind_test_4c,]#
+dim(test_id_4c)#
+train_id_4c = labelling_4c[ind_train_4c,]#
+dim(train_id_4c)#
+#training data first#
+#
+mean_face_4c <- colMeans(train_matrix_4c)#
+means_mat_4c=as.matrix(mean_face_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_4c=matrix(means_mat_4c,192,168)#
+means_face_4c=pixmapGrey(means_mat_ref_4c)#
+plot(means_face_4c)#
+pic_mat_size_4c = dim(train_matrix_4c)#
+pic_mat_centered_4c = mat.or.vec(pic_mat_size_4c[1],pic_mat_size_4c[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size_4c[1]){#
+	pic_mat_centered_4c[i,] = train_matrix_4c[i,] - mean_face_4c#
+}#
+#
+dim(pic_mat_centered_4c)#
+pca_results_4c <- prcomp(pic_mat_centered_4c)#
+#
+dim(pca_results_4c)#
+#
+dim(as.matrix(loading_temp_4c))#
+dim(pic_mat_centered_4c)#
+num_comp_mod_4c = length(pca_results_4c$x[,1])#
+scores_query_4c = mat.or.vec(num_comp_mod_4c,1)#
+trainingset_4c=NULL#
+for (i in 1:121){#
+	placeholder_4c = NULL#
+for(j in 1:25){#
+	loading_temp_4c = pca_results_4c$rotation[,j]#
+	scores_query_4c = pic_mat_centered_4c[i,] %*% loading_temp_4c  #
+	placeholder_4c = cbind(placeholder_4c,scores_query_4c)#
+	}#
+	trainingset_4c=rbind(trainingset_4c,placeholder_4c)#
+}#
+#
+dim(trainingset_4c)
+mean_face_test_4c <- colMeans(test_matrix_4c)#
+means_mat_test_4c=as.matrix(mean_face_test_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test_4c=matrix(means_mat_test_4c,192,168)#
+means_face_test_4c=pixmapGrey(means_mat_ref_test_4c)#
+plot(means_face_test_4c)#
+pic_mat_size_test_4c = dim(test_matrix_4c)#
+pic_mat_centered_test_4c = mat.or.vec(pic_mat_size_test_4c[1],pic_mat_size_test_4c[2])#
+#
+# I am using a loop, but one could use apply()#
+for (i in 1:pic_mat_size_test_4c[1]){#
+	pic_mat_centered_test_4c[i,] = test_matrix_4c[i,] - mean_face_4c#
+}#
+#
+dim(pic_mat_centered_test_4c)#
+pca_results_test_4c <- prcomp(pic_mat_centered_test_4c)#
+#
+dim(as.matrix(pca_results_test_4c))#
+#
+dim(as.matrix(loading_temp_test_4c))#
+dim(pic_mat_centered_test_4c)#
+num_comp_mod_test_4c = length(pca_results_test_4c$x[,1])#
+scores_query_test_4c = mat.or.vec(num_comp_mod_test_4c,1)#
+testingset_4c=NULL#
+for (i in 1:31){#
+	placeholder_test_4c = NULL#
+for(j in 1:25){#
+	loading_temp_test_4c = pca_results_test_4c$rotation[,j]#
+	scores_query_test_4c = pic_mat_centered_test_4c[i,] %*% loading_temp_test_4c  #
+	placeholder_test_4c = cbind(placeholder_test_4c,scores_query_test_4c)#
+	}#
+	testingset_4c=rbind(testingset_4c,placeholder_test_4c)#
+}#
+#
+dim(testingset_4c)
+cl <- row.names(data.frame(trainingset_4c))
+Y_test_hat_4c <- knn(trainingset, testingset, cl, k=1)
+Y_test_hat_4c!=cl
+sum(Y_test_hat_4c!=cl)
+cl2 <- factor(ind_train_4c)
+Y_test_hat_4c <- knn(trainingset, testingset, cl2, k=1)
+Y_test_hat_4c!=cl
+cl2 <- factor(ind_test_4c)
+Y_test_hat_4c <- knn(trainingset, testingset, cl2, k=1)
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)
+cl2 <- factor(ind_train_4c)
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)
+Y_test_hat_4c!=cl
+ind_train_4c
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)
+ind_train_4c
+cl2 <- factor(ind_train_4c)
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)
+Y_test_hat_4c!=cl
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]#
+test_matrix_4c=all_faces_4c[ind_test_4c,]#
+#
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+#
+test_id_4c = labelling_4c[ind_test_4c,]#
+#
+train_id_4c = labelling_4c[ind_train_4c,]#
+#training data first#
+#
+mean_face_4c <- colMeans(train_matrix_4c)#
+means_mat_4c=as.matrix(mean_face_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_4c=matrix(means_mat_4c,192,168)#
+pic_mat_size_4c = dim(train_matrix_4c)#
+pic_mat_centered_4c = mat.or.vec(pic_mat_size_4c[1],pic_mat_size_4c[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size_4c[1]){#
+	pic_mat_centered_4c[i,] = train_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_4c <- prcomp(pic_mat_centered_4c)#
+num_comp_mod_4c = length(pca_results_4c$x[,1])#
+scores_query_4c = mat.or.vec(num_comp_mod_4c,1)#
+trainingset_4c=NULL#
+for (i in 1:121){#
+	placeholder_4c = NULL#
+for(j in 1:25){#
+	loading_temp_4c = pca_results_4c$rotation[,j]#
+	scores_query_4c = pic_mat_centered_4c[i,] %*% loading_temp_4c  #
+	placeholder_4c = cbind(placeholder_4c,scores_query_4c)#
+	}#
+	trainingset_4c=rbind(trainingset_4c,placeholder_4c)#
+}#
+mean_face_test_4c <- colMeans(test_matrix_4c)#
+means_mat_test_4c=as.matrix(mean_face_test_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test_4c=matrix(means_mat_test_4c,192,168)#
+pic_mat_size_test_4c = dim(test_matrix_4c)#
+pic_mat_centered_test_4c = mat.or.vec(pic_mat_size_test_4c[1],pic_mat_size_test_4c[2])#
+#
+for (i in 1:pic_mat_size_test_4c[1]){#
+	pic_mat_centered_test_4c[i,] = test_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_test_4c <- prcomp(pic_mat_centered_test_4c)#
+num_comp_mod_test_4c = length(pca_results_test_4c$x[,1])#
+scores_query_test_4c = mat.or.vec(num_comp_mod_test_4c,1)#
+testingset_4c=NULL#
+for (i in 1:31){#
+	placeholder_test_4c = NULL#
+for(j in 1:25){#
+	loading_temp_test_4c = pca_results_test_4c$rotation[,j]#
+	scores_query_test_4c = pic_mat_centered_test_4c[i,] %*% loading_temp_test_4c  #
+	placeholder_test_4c = cbind(placeholder_test_4c,scores_query_test_4c)#
+	}#
+	testingset_4c=rbind(testingset_4c,placeholder_test_4c)#
+}#
+#this works?#
+cl2 <- factor(ind_train_4c)#
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)#
+Y_test_hat_4c!=cl#
+sum(Y_test_hat_4c!=cl)
+cl2 <- factor(ind_train_4c)#
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)#
+Y_test_hat_4c!=cl2#
+sum(Y_test_hat_4c!=cl2)
+smallest=matrix(nrow=10,ncol=10)#
+MSE_test=vector()#
+MSE_train=vector()#
+for(k in 1:10){#
+	abba <- order(distances[,1],decreasing=F)[2:(k+1)]#
+	smallest[k,(1:k)] = dataset[abba,3]#
+	yhat=sum(dataset[abba,3])/k#
+	MSE_test[k]=(dataset[1,3]-yhat)^2#
+	MSE_train[k]=((dataset[1,3]-yhat)^2)/19#
+	}#
+MSE_test#
+MSE_train
+setwd("~/Dropbox/SIPA/Data Mining/HW3")
+dataset <- read.csv(file="hw03_q3.csv")#
+head(dataset)#
+dataset_x_only <- dataset[,1:2]#
+head(dataset_x_only)#
+distances <-as.matrix(dist(dataset_x_only))#
+distances#
+#----- END YOUR CODE BLOCK HERE -----##
+##################
+# Problem 3b#
+##################
+#----- START YOUR CODE BLOCK HERE -----##
+dataset_y_only <- dataset[,3]#
+head(dataset_y_only)#
+#
+test <- dataset_x_only[1,]#
+test#
+train <- dataset_x_only[2:20,]#
+train#
+plot(dataset_x_only,)#
+text(x2, x3, ID)#
+identity#
+dataset#
+#
+which.min(distances[,1])#
+n <- length(distances[,1])#
+sort(distances[,1],partial=n-2)[n-2]#
+abba <-which(sort(distances[,1],FALSE)[2:3])#
+#
+which.max(distances[,1])[1]#
+abba <- order(distances[,1],decreasing=F)[2:3]#
+yhat=dataset[abba,3]#
+yhat#
+sum(yhat)#
+dataset#
+yhat#
+MSE_test#
+MSE_train#
+smallest#
+yhat=vector#
+smallest=matrix(nrow=10,ncol=10)#
+MSE_test=vector()#
+MSE_train=vector()#
+for(k in 1:10){#
+	abba <- order(distances[,1],decreasing=F)[2:(k+1)]#
+	smallest[k,(1:k)] = dataset[abba,3]#
+	yhat=sum(dataset[abba,3])/k#
+	MSE_test[k]=(dataset[1,3]-yhat)^2#
+	MSE_train[k]=((dataset[1,3]-yhat)^2)/19#
+	}#
+MSE_test#
+MSE_train
+smallest
+for(k in 1:10){#
+	abba <- order(distances[,1],decreasing=F)[1:k]#
+	smallest[k,(1:k)] = dataset[abba,3]#
+	yhat=sum(dataset[abba,3])/k#
+	MSE_train[k]=((dataset[1,3]-yhat)^2)/19#
+	}
+MSE_train
+smallest
+smallest=matrix(nrow=10,ncol=10)#
+MSE_test=vector()#
+MSE_train=vector()#
+for(k in 1:10){#
+	abba <- order(distances[,1],decreasing=F)[1:k]#
+	smallest[k,(1:k)] = dataset[abba,3]#
+	yhat=sum(dataset[abba,3])/k#
+	MSE_train[k]=((dataset[1,3]-yhat)^2)/19#
+	}#
+for(k in 1:10){#
+	abba <- order(distances[,1],decreasing=F)[2:(k+1)]#
+	smallest[k,(1:k)] = dataset[abba,3]#
+	yhat=sum(dataset[abba,3])/k#
+	MSE_test[k]=(dataset[1,3]-yhat)^2#
+	}#
+#
+MSE_test#
+MSE_train#
+smallest
+plot(dataset_x_only,)#
+text(x2, x3, ID)
+plot(dataset_x_only)#
+text(x2, x3, ID)
+plot(dataset_x_only,ID)
+MSE_test=vector()#
+MSE_train=vector()#
+#
+smallest=matrix(nrow=190,ncol=10)#
+MSE_test_all=NULL#
+MSE_train_all=NULL#
+for(i in 2:20){#
+	MSE_test=vector()#
+	MSE_train=vector()#
+for(k in 1:10){#
+	abba_train <- order(distances[,i],decreasing=F)[1:k]#
+	smallest_train[k,(1:k)] = dataset[abba_train,3]#
+	yhat_train=sum(dataset[abba_train,3])/k#
+	MSE_train[k]=((dataset[i,3]-yhat)^2)/19#
+	}#
+for(k in 1:10){#
+	abba <- order(distances[,i],decreasing=F)[2:(k+1)]#
+	smallest[k,(1:k)] = dataset[abba,3]#
+	yhat=sum(dataset[abba,3])/k#
+	MSE_test[k]=(dataset[i,3]-yhat)^2#
+	}#
+	MSE_test_all=rbind(MSE_test_all,MSE_test)#
+	MSE_train_all=rbind(MSE_train_all,MSE_train)#
+}#
+#
+MSE_test#
+MSE_train#
+smallest
+MSE_test=vector()#
+MSE_train=vector()#
+#
+smallest=matrix(nrow=190,ncol=10)#
+MSE_test_all=NULL#
+MSE_train_all=NULL#
+for(i in 2:20){#
+	MSE_test=vector()#
+	MSE_train=vector()#
+for(k in 1:10){#
+	abba_train <- order(distances[,i],decreasing=F)[1:k]#
+	smallest_train[k,(1:k)] = dataset[abba_train,3]#
+	yhat_train=sum(dataset[abba_train,3])/k#
+	MSE_train[k]=((dataset[i,3]-yhat)^2)/19#
+	}#
+	MSE_train_all=rbind(MSE_train_all,MSE_train)#
+}#
+for(i in 2:20){#
+	MSE_test=vector()#
+	MSE_train=vector()#
+#
+for(k in 1:10){#
+	abba <- order(distances[,i],decreasing=F)[2:(k+1)]#
+	smallest[k,(1:k)] = dataset[abba,3]#
+	yhat=sum(dataset[abba,3])/k#
+	MSE_test[k]=(dataset[i,3]-yhat)^2#
+	}#
+	MSE_test_all=rbind(MSE_test_all,MSE_test)#
+}#
+#
+MSE_test#
+MSE_train#
+smallest
+MSE_test=vector()#
+MSE_train=vector()#
+#
+smallest=matrix(nrow=190,ncol=10)#
+MSE_test_all=NULL#
+MSE_train_all=NULL#
+for(i in 2:20){#
+	MSE_test=vector()#
+	MSE_train=vector()#
+for(k in 1:10){#
+	abba <- order(distances[,i],decreasing=F)[1:k]#
+	smallest[k,(1:k)] = dataset[abba,3]#
+	yhat=sum(dataset[abba,3])/k#
+	MSE_train[k]=((dataset[i,3]-yhat)^2)/19#
+	}#
+	MSE_train_all=rbind(MSE_train_all,MSE_train)#
+}#
+for(i in 2:20){#
+	MSE_test=vector()#
+	MSE_train=vector()#
+#
+for(k in 1:10){#
+	abba <- order(distances[,i],decreasing=F)[2:(k+1)]#
+	smallest[k,(1:k)] = dataset[abba,3]#
+	yhat=sum(dataset[abba,3])/k#
+	MSE_test[k]=(dataset[i,3]-yhat)^2#
+	}#
+	MSE_test_all=rbind(MSE_test_all,MSE_test)#
+}#
+#
+MSE_test#
+MSE_train#
+smallest
+MSE_test_all#
+MSE_train_all
+remane the column names to the different values of k#
+colnames(MSE_test_all) <-c("k=1","k=2","k=3","k=4","k=5","k=6","k=7","k=8","k=9","k=10")#
+colnames(MSE_train_all) <-c("k=1","k=2","k=3","k=4","k=5","k=6","k=7","k=8","k=9","k=10")#
+#rename the row names to the ith data point#
+rownames(MSE_test_all)<-c(2:20)#
+rownames(MSE_train_all)<-c(2:20)#
+#
+#examine renamed MSE matrices#
+MSE_test_all#
+MSE_train_all
+which.min(colMeans(MSE_test_all))#
+which.min(colMeans(MSE_train_all))
+colMeans(MSE_test_all)#
+colMeans(MSE_train_all)
+the list of pictures#
+dir_list_1 = dir(path="CroppedYale/",all.files=FALSE)#
+views_4a = c('P00A+000E+00', 'P00A+005E+10', 'P00A+005E-10', 'P00A+010E+00' )#
+#
+# preallocate an empty list#
+this_face_row = vector()#
+# initialize an empty matrix of faces data#
+face_matrix_4a = vector()#
+pic_list = c( 01,02,03,04,05,06,07,08,09,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39)#
+#generating a matrix of photos of the 4 desired views#
+#
+for (i in 1:38) {#
+placeholder_matrix <- NULL#
+#
+for (j in 1:4) {#
+	filename= sprintf("CroppedYale/%s/%s_%s.pgm",dir_list_1[i],dir_list_1[i],views_4a[j])#
+print(filename)#
+face=read.pnm(file=filename)#
+pic_data <-getChannels(face)#
+pic_data_vec <- as.vector(pic_data)#
+placeholder_matrix=rbind(placeholder_matrix,c(pic_data_vec,i,j))#
+}#
+face_matrix_4a=rbind(face_matrix_4a,placeholder_matrix)#
+}#
+#
+dim(face_matrix_4a)
+all_faces <- face_matrix_4a[,1:32256]#
+labelling <- face_matrix_4a[,32257:32258]#
+#
+dim(all_faces)#
+dim(labelling)
+Get the size of the matrix for use later#
+fm_4a_size = dim(face_matrix_4a)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4a = floor(fm_4a_size[1]*4/5) # Number of training obs#
+ntest_4a = fm_4a_size[1]-ntrain_4a # Number of testing obs#
+set.seed(1) # Set pseudo-random numbers so everyone gets the same output#
+ind_train_4a = sample(1:fm_4a_size[1],ntrain_4a) # Training indices#
+ind_test_4a = c(1:fm_4a_size[1])[-ind_train_4a] # Testing indices#
+#----- START YOUR CODE BLOCK HERE -----##
+ind_train_4a#
+test_matrix=all_faces[ind_test_4a,]#
+dim(test_matrix)#
+train_matrix=all_faces[ind_train_4a,]#
+dim(train_matrix)#
+test_id = labelling[ind_test_4a,]#
+dim(test_id)#
+train_id = labelling[ind_train_4a,]#
+dim(train_id)
+ind_train_4a[1:5]
+ind_train_4a[1:5]#
+ind_test_4a[1:5]
+dir_list_1 = dir(path="CroppedYale/",all.files=FALSE)#
+views_4a = c('P00A+000E+00', 'P00A+005E+10', 'P00A+005E-10', 'P00A+010E+00' )#
+#
+# preallocate an empty list#
+this_face_row = vector()#
+# initialize an empty matrix of faces data#
+face_matrix_4a = vector()#
+pic_list = c( 01,02,03,04,05,06,07,08,09,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39)#
+#generating a matrix of photos of the 4 desired views#
+#
+for (i in 1:38) {#
+placeholder_matrix <- NULL#
+#
+for (j in 1:4) {#
+	filename= sprintf("CroppedYale/%s/%s_%s.pgm",dir_list_1[i],dir_list_1[i],views_4a[j])#
+print(filename)#
+face=read.pnm(file=filename)#
+pic_data <-getChannels(face)#
+pic_data_vec <- as.vector(pic_data)#
+placeholder_matrix=rbind(placeholder_matrix,c(pic_data_vec,i,views_4a[j]))#
+}#
+face_matrix_4a=rbind(face_matrix_4a,placeholder_matrix)#
+}#
+#
+dim(face_matrix_4a)#
+all_faces <- face_matrix_4a[,1:32256]#
+labelling <- face_matrix_4a[,32257:32258]#
+#
+dim(all_faces)#
+dim(labelling)
+head(labelling)
+colnames(labelling) <-c("subject","view")
+labelling
+ind_train_4a[1:5]
+ind_test_4a[1:5]
+ind_test_4a
+labelling(ind_train_4a[1:5],)
+labelling[ind_train_4a[1:5],]
+labelling[ind_test_4a[1:5],]
+training data first#
+#
+mean_face <- colMeans(train_matrix)#
+means_mat=as.matrix(mean_face)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref=matrix(means_mat,192,168)#
+means_face=pixmapGrey(means_mat_ref)#
+plot(means_face)#
+pic_mat_size = dim(train_matrix)#
+pic_mat_centered = mat.or.vec(pic_mat_size[1],pic_mat_size[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size[1]){#
+	pic_mat_centered[i,] = train_matrix[i,] - mean_face#
+}#
+#
+dim(pic_mat_centered)#
+pca_results <- prcomp(pic_mat_centered)#
+#
+dim(pca_results)#
+#
+dim(as.matrix(loading_temp))#
+dim(pic_mat_centered)#
+num_comp_mod = length(pca_results$x[,1])#
+scores_query = mat.or.vec(num_comp_mod,1)#
+trainingset=NULL#
+for (i in 1:121){#
+	placeholder = NULL#
+for(j in 1:25){#
+	loading_temp = pca_results$rotation[,j]#
+	scores_query = pic_mat_centered[i,] %*% loading_temp  #
+	placeholder = cbind(placeholder,scores_query)#
+	}#
+	trainingset=rbind(trainingset,placeholder)#
+}#
+#
+dim(trainingset)
+mean_face_test <- colMeans(test_matrix)#
+means_mat_test=as.matrix(mean_face_test)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test=matrix(means_mat_test,192,168)#
+means_face_test=pixmapGrey(means_mat_ref_test)#
+plot(means_face_test)#
+pic_mat_size_test = dim(test_matrix)#
+pic_mat_centered_test = mat.or.vec(pic_mat_size_test[1],pic_mat_size_test[2])#
+#
+# I am using a loop, but one could use apply()#
+for (i in 1:pic_mat_size_test[1]){#
+	pic_mat_centered_test[i,] = test_matrix[i,] - mean_face#
+}#
+#
+dim(pic_mat_centered_test)#
+pca_results_test <- prcomp(pic_mat_centered_test)#
+#
+dim(as.matrix(pca_results_test))#
+#
+dim(as.matrix(loading_temp_test))#
+dim(pic_mat_centered_test)#
+num_comp_mod_test = length(pca_results_test$x[,1])#
+scores_query_test = mat.or.vec(num_comp_mod_test,1)#
+testingset=NULL#
+for (i in 1:31){#
+	placeholder_test = NULL#
+for(j in 1:25){#
+	loading_temp_test = pca_results_test$rotation[,j] #note this is the same as training (I think it's supposed to be like this)#
+	scores_query_test = pic_mat_centered_test[i,] %*% loading_temp_test  #
+	placeholder_test = cbind(placeholder_test,scores_query_test)#
+	}#
+	testingset=rbind(testingset,placeholder_test)#
+}#
+#
+dim(testingset)
+cl2 <-factor(ind_train_4a)
+Y_test_hat <- knn(trainingset, testingset, cl2, k=1)#
+Y_test_hat!=cl2
+Y_test_hat==cl2
+the list of pictures#
+dir_list_1 = dir(path="CroppedYale/",all.files=FALSE)#
+views_4c = c('P00A-035E+15', 'P00A-050E+00', 'P00A+035E+15', 'P00A+050E+00')#
+#
+# preallocate an empty list#
+this_face_row = vector()#
+# initialize an empty matrix of faces data#
+face_matrix_4c = vector()#
+pic_list = c( 01,02,03,04,05,06,07,08,09,10,11,12,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39)#
+#generating a matrix of photos of the 4 desired views#
+#
+for (i in 1:38) {#
+placeholder_matrix <- NULL#
+#
+for (j in 1:4) {#
+	filename= sprintf("CroppedYale/%s/%s_%s.pgm",dir_list_1[i],dir_list_1[i],views_4c[j])#
+print(filename)#
+face=read.pnm(file=filename)#
+pic_data <-getChannels(face)#
+pic_data_vec <- as.vector(pic_data)#
+placeholder_matrix=rbind(placeholder_matrix,c(pic_data_vec,i,views_4c[j]))#
+}#
+face_matrix_4c=rbind(face_matrix_4c,placeholder_matrix)#
+}#
+#
+dim(face_matrix_4c)#
+all_faces_4c <- face_matrix_4c[,1:32256]#
+labelling_4c <- face_matrix_4c[,32257:32258]#
+#----- END YOUR CODE BLOCK HERE -----##
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]#
+#----- START YOUR CODE BLOCK HERE -----##
+ind_train_4c#
+ind_test_4c#
+#
+test_matrix_4c=all_faces_4c[ind_test_4c,]#
+dim(test_matrix_4c)#
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+dim(train_matrix_4c)#
+test_id_4c = labelling_4c[ind_test_4c,]#
+dim(test_id_4c)#
+train_id_4c = labelling_4c[ind_train_4c,]#
+dim(train_id_4c)#
+#find the rows referenced by the first 5 files of the training and testing sets#
+ind_train_4c[1:5]#
+ind_test_4c[1:5]#
+#
+#find the first 5 files of the training and testing sets#
+labelling[ind_train_4c[1:5],]#
+labelling[ind_test_4c[1:5],]
+mean_face_4c <- colMeans(train_matrix_4c)#
+means_mat_4c=as.matrix(mean_face_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_4c=matrix(means_mat_4c,192,168)#
+means_face_4c=pixmapGrey(means_mat_ref_4c)#
+plot(means_face_4c)#
+pic_mat_size_4c = dim(train_matrix_4c)#
+pic_mat_centered_4c = mat.or.vec(pic_mat_size_4c[1],pic_mat_size_4c[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size_4c[1]){#
+	pic_mat_centered_4c[i,] = train_matrix_4c[i,] - mean_face_4c#
+}#
+#
+dim(pic_mat_centered_4c)#
+pca_results_4c <- prcomp(pic_mat_centered_4c)#
+#
+dim(pca_results_4c)#
+#
+dim(as.matrix(loading_temp_4c))#
+dim(pic_mat_centered_4c)#
+num_comp_mod_4c = length(pca_results_4c$x[,1])#
+scores_query_4c = mat.or.vec(num_comp_mod_4c,1)#
+trainingset_4c=NULL#
+for (i in 1:121){#
+	placeholder_4c = NULL#
+for(j in 1:25){#
+	loading_temp_4c = pca_results_4c$rotation[,j]#
+	scores_query_4c = pic_mat_centered_4c[i,] %*% loading_temp_4c  #
+	placeholder_4c = cbind(placeholder_4c,scores_query_4c)#
+	}#
+	trainingset_4c=rbind(trainingset_4c,placeholder_4c)#
+}#
+#
+dim(trainingset_4c)
+mean_face_test_4c <- colMeans(test_matrix_4c)#
+means_mat_test_4c=as.matrix(mean_face_test_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test_4c=matrix(means_mat_test_4c,192,168)#
+means_face_test_4c=pixmapGrey(means_mat_ref_test_4c)#
+plot(means_face_test_4c)#
+pic_mat_size_test_4c = dim(test_matrix_4c)#
+pic_mat_centered_test_4c = mat.or.vec(pic_mat_size_test_4c[1],pic_mat_size_test_4c[2])#
+#
+# I am using a loop, but one could use apply()#
+for (i in 1:pic_mat_size_test_4c[1]){#
+	pic_mat_centered_test_4c[i,] = test_matrix_4c[i,] - mean_face_4c#
+}#
+#
+dim(pic_mat_centered_test_4c)#
+pca_results_test_4c <- prcomp(pic_mat_centered_test_4c)#
+#
+dim(as.matrix(pca_results_test_4c))#
+#
+dim(as.matrix(loading_temp_test_4c))#
+dim(pic_mat_centered_test_4c)#
+num_comp_mod_test_4c = length(pca_results_test_4c$x[,1])#
+scores_query_test_4c = mat.or.vec(num_comp_mod_test_4c,1)#
+testingset_4c=NULL#
+for (i in 1:31){#
+	placeholder_test_4c = NULL#
+for(j in 1:25){#
+	loading_temp_test_4c = pca_results_test_4c$rotation[,j]#
+	scores_query_test_4c = pic_mat_centered_test_4c[i,] %*% loading_temp_test_4c  #
+	placeholder_test_4c = cbind(placeholder_test_4c,scores_query_test_4c)#
+	}#
+	testingset_4c=rbind(testingset_4c,placeholder_test_4c)#
+}#
+#
+dim(testingset_4c)
+cl2 <- factor(ind_train_4c)
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)
+Y_test_hat_4c!=cl2
+sum(Y_test_hat_4c!=cl2)
+cl <- row.names(data.frame(trainingset_4c))
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl, k=1)
+Y_test_hat_4c!=cl
+cl <- row.names(data.frame(testingset_4c))
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl, k=1)
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]#
+test_matrix_4c=all_faces_4c[ind_test_4c,]#
+#
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+#
+test_id_4c = labelling_4c[ind_test_4c,]#
+#
+train_id_4c = labelling_4c[ind_train_4c,]#
+#training data first#
+#
+mean_face_4c <- colMeans(train_matrix_4c)#
+means_mat_4c=as.matrix(mean_face_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_4c=matrix(means_mat_4c,192,168)#
+pic_mat_size_4c = dim(train_matrix_4c)#
+pic_mat_centered_4c = mat.or.vec(pic_mat_size_4c[1],pic_mat_size_4c[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size_4c[1]){#
+	pic_mat_centered_4c[i,] = train_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_4c <- prcomp(pic_mat_centered_4c)#
+num_comp_mod_4c = length(pca_results_4c$x[,1])#
+scores_query_4c = mat.or.vec(num_comp_mod_4c,1)#
+trainingset_4c=NULL#
+for (i in 1:121){#
+	placeholder_4c = NULL#
+for(j in 1:25){#
+	loading_temp_4c = pca_results_4c$rotation[,j]#
+	scores_query_4c = pic_mat_centered_4c[i,] %*% loading_temp_4c  #
+	placeholder_4c = cbind(placeholder_4c,scores_query_4c)#
+	}#
+	trainingset_4c=rbind(trainingset_4c,placeholder_4c)#
+}#
+mean_face_test_4c <- colMeans(test_matrix_4c)#
+means_mat_test_4c=as.matrix(mean_face_test_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test_4c=matrix(means_mat_test_4c,192,168)#
+pic_mat_size_test_4c = dim(test_matrix_4c)#
+pic_mat_centered_test_4c = mat.or.vec(pic_mat_size_test_4c[1],pic_mat_size_test_4c[2])#
+#
+for (i in 1:pic_mat_size_test_4c[1]){#
+	pic_mat_centered_test_4c[i,] = test_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_test_4c <- prcomp(pic_mat_centered_test_4c)#
+num_comp_mod_test_4c = length(pca_results_test_4c$x[,1])#
+scores_query_test_4c = mat.or.vec(num_comp_mod_test_4c,1)#
+testingset_4c=NULL#
+for (i in 1:31){#
+	placeholder_test_4c = NULL#
+for(j in 1:25){#
+	loading_temp_test_4c = pca_results_test_4c$rotation[,j]#
+	scores_query_test_4c = pic_mat_centered_test_4c[i,] %*% loading_temp_test_4c  #
+	placeholder_test_4c = cbind(placeholder_test_4c,scores_query_test_4c)#
+	}#
+	testingset_4c=rbind(testingset_4c,placeholder_test_4c)#
+}#
+#this works?#
+cl2 <- factor(ind_train_4c)#
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)#
+Y_test_hat_4c!=cl2#
+sum(Y_test_hat_4c!=cl2)
+correct <- sum(Y_test_hat_4c==cl2)#
+rates <- as.vector(incorrect, correct)
+rates
+rates <- matrix(c(incorrect, correct)
+rates <- matrix(c(incorrect, correct))
+rates <- matrix(c(incorrect, correct))
+incorrect
+incorrect <- sum(Y_test_hat_4c!=cl2)
+incorrect
+correct <- sum(Y_test_hat_4c==cl2)
+correct
+rates <- matrix(c(incorrect, correct))
+rates
+rownames(rates) <-c("incorrect","correct")
+rates
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]#
+test_matrix_4c=all_faces_4c[ind_test_4c,]#
+#
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+#
+test_id_4c = labelling_4c[ind_test_4c,]#
+#
+train_id_4c = labelling_4c[ind_train_4c,]#
+#training data first#
+#
+mean_face_4c <- colMeans(train_matrix_4c)#
+means_mat_4c=as.matrix(mean_face_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_4c=matrix(means_mat_4c,192,168)#
+pic_mat_size_4c = dim(train_matrix_4c)#
+pic_mat_centered_4c = mat.or.vec(pic_mat_size_4c[1],pic_mat_size_4c[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size_4c[1]){#
+	pic_mat_centered_4c[i,] = train_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_4c <- prcomp(pic_mat_centered_4c)#
+num_comp_mod_4c = length(pca_results_4c$x[,1])#
+scores_query_4c = mat.or.vec(num_comp_mod_4c,1)#
+trainingset_4c=NULL#
+for (i in 1:121){#
+	placeholder_4c = NULL#
+for(j in 1:25){#
+	loading_temp_4c = pca_results_4c$rotation[,j]#
+	scores_query_4c = pic_mat_centered_4c[i,] %*% loading_temp_4c  #
+	placeholder_4c = cbind(placeholder_4c,scores_query_4c)#
+	}#
+	trainingset_4c=rbind(trainingset_4c,placeholder_4c)#
+}#
+mean_face_test_4c <- colMeans(test_matrix_4c)#
+means_mat_test_4c=as.matrix(mean_face_test_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test_4c=matrix(means_mat_test_4c,192,168)#
+pic_mat_size_test_4c = dim(test_matrix_4c)#
+pic_mat_centered_test_4c = mat.or.vec(pic_mat_size_test_4c[1],pic_mat_size_test_4c[2])#
+#
+for (i in 1:pic_mat_size_test_4c[1]){#
+	pic_mat_centered_test_4c[i,] = test_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_test_4c <- prcomp(pic_mat_centered_test_4c)#
+num_comp_mod_test_4c = length(pca_results_test_4c$x[,1])#
+scores_query_test_4c = mat.or.vec(num_comp_mod_test_4c,1)#
+testingset_4c=NULL#
+for (i in 1:31){#
+	placeholder_test_4c = NULL#
+for(j in 1:25){#
+	loading_temp_test_4c = pca_results_test_4c$rotation[,j]#
+	scores_query_test_4c = pic_mat_centered_test_4c[i,] %*% loading_temp_test_4c  #
+	placeholder_test_4c = cbind(placeholder_test_4c,scores_query_test_4c)#
+	}#
+	testingset_4c=rbind(testingset_4c,placeholder_test_4c)#
+}#
+#this works?#
+cl2 <- factor(ind_train_4c)#
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)#
+Y_test_hat_4c!=cl2#
+incorrect <- sum(Y_test_hat_4c!=cl2)#
+correct <- sum(Y_test_hat_4c==cl2)#
+rates <- matrix(c(incorrect, correct))#
+rownames(rates) <-c("incorrect","correct")#
+rates
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]#
+test_matrix_4c=all_faces_4c[ind_test_4c,]#
+#
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+#
+test_id_4c = labelling_4c[ind_test_4c,]#
+#
+train_id_4c = labelling_4c[ind_train_4c,]#
+#training data first#
+#
+mean_face_4c <- colMeans(train_matrix_4c)#
+means_mat_4c=as.matrix(mean_face_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_4c=matrix(means_mat_4c,192,168)#
+pic_mat_size_4c = dim(train_matrix_4c)#
+pic_mat_centered_4c = mat.or.vec(pic_mat_size_4c[1],pic_mat_size_4c[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size_4c[1]){#
+	pic_mat_centered_4c[i,] = train_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_4c <- prcomp(pic_mat_centered_4c)#
+num_comp_mod_4c = length(pca_results_4c$x[,1])#
+scores_query_4c = mat.or.vec(num_comp_mod_4c,1)#
+trainingset_4c=NULL#
+for (i in 1:121){#
+	placeholder_4c = NULL#
+for(j in 1:25){#
+	loading_temp_4c = pca_results_4c$rotation[,j]#
+	scores_query_4c = pic_mat_centered_4c[i,] %*% loading_temp_4c  #
+	placeholder_4c = cbind(placeholder_4c,scores_query_4c)#
+	}#
+	trainingset_4c=rbind(trainingset_4c,placeholder_4c)#
+}#
+mean_face_test_4c <- colMeans(test_matrix_4c)#
+means_mat_test_4c=as.matrix(mean_face_test_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test_4c=matrix(means_mat_test_4c,192,168)#
+pic_mat_size_test_4c = dim(test_matrix_4c)#
+pic_mat_centered_test_4c = mat.or.vec(pic_mat_size_test_4c[1],pic_mat_size_test_4c[2])#
+#
+for (i in 1:pic_mat_size_test_4c[1]){#
+	pic_mat_centered_test_4c[i,] = test_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_test_4c <- prcomp(pic_mat_centered_test_4c)#
+num_comp_mod_test_4c = length(pca_results_test_4c$x[,1])#
+scores_query_test_4c = mat.or.vec(num_comp_mod_test_4c,1)#
+testingset_4c=NULL#
+for (i in 1:31){#
+	placeholder_test_4c = NULL#
+for(j in 1:25){#
+	loading_temp_test_4c = pca_results_test_4c$rotation[,j]#
+	scores_query_test_4c = pic_mat_centered_test_4c[i,] %*% loading_temp_test_4c  #
+	placeholder_test_4c = cbind(placeholder_test_4c,scores_query_test_4c)#
+	}#
+	testingset_4c=rbind(testingset_4c,placeholder_test_4c)#
+}#
+#this works?#
+cl2 <- factor(ind_train_4c)#
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)#
+Y_test_hat_4c!=cl2#
+incorrect <- sum(Y_test_hat_4c!=cl2)#
+correct <- sum(Y_test_hat_4c==cl2)#
+rates <- matrix(c(incorrect, correct))#
+rownames(rates) <-c("incorrect","correct")#
+rates
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]#
+test_matrix_4c=all_faces_4c[ind_test_4c,]#
+#
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+#
+test_id_4c = labelling_4c[ind_test_4c,]#
+#
+train_id_4c = labelling_4c[ind_train_4c,]#
+#training data first#
+#
+mean_face_4c <- colMeans(train_matrix_4c)#
+means_mat_4c=as.matrix(mean_face_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_4c=matrix(means_mat_4c,192,168)#
+pic_mat_size_4c = dim(train_matrix_4c)#
+pic_mat_centered_4c = mat.or.vec(pic_mat_size_4c[1],pic_mat_size_4c[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size_4c[1]){#
+	pic_mat_centered_4c[i,] = train_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_4c <- prcomp(pic_mat_centered_4c)#
+num_comp_mod_4c = length(pca_results_4c$x[,1])#
+scores_query_4c = mat.or.vec(num_comp_mod_4c,1)#
+trainingset_4c=NULL#
+for (i in 1:121){#
+	placeholder_4c = NULL#
+for(j in 1:25){#
+	loading_temp_4c = pca_results_4c$rotation[,j]#
+	scores_query_4c = pic_mat_centered_4c[i,] %*% loading_temp_4c  #
+	placeholder_4c = cbind(placeholder_4c,scores_query_4c)#
+	}#
+	trainingset_4c=rbind(trainingset_4c,placeholder_4c)#
+}#
+mean_face_test_4c <- colMeans(test_matrix_4c)#
+means_mat_test_4c=as.matrix(mean_face_test_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test_4c=matrix(means_mat_test_4c,192,168)#
+pic_mat_size_test_4c = dim(test_matrix_4c)#
+pic_mat_centered_test_4c = mat.or.vec(pic_mat_size_test_4c[1],pic_mat_size_test_4c[2])#
+#
+for (i in 1:pic_mat_size_test_4c[1]){#
+	pic_mat_centered_test_4c[i,] = test_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_test_4c <- prcomp(pic_mat_centered_test_4c)#
+num_comp_mod_test_4c = length(pca_results_test_4c$x[,1])#
+scores_query_test_4c = mat.or.vec(num_comp_mod_test_4c,1)#
+testingset_4c=NULL#
+for (i in 1:31){#
+	placeholder_test_4c = NULL#
+for(j in 1:25){#
+	loading_temp_test_4c = pca_results_test_4c$rotation[,j]#
+	scores_query_test_4c = pic_mat_centered_test_4c[i,] %*% loading_temp_test_4c  #
+	placeholder_test_4c = cbind(placeholder_test_4c,scores_query_test_4c)#
+	}#
+	testingset_4c=rbind(testingset_4c,placeholder_test_4c)#
+}#
+#this works?#
+cl2 <- factor(ind_train_4c)#
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)#
+Y_test_hat_4c!=cl2#
+incorrect <- sum(Y_test_hat_4c!=cl2)#
+correct <- sum(Y_test_hat_4c==cl2)#
+rates <- matrix(c(incorrect, correct))#
+rownames(rates) <-c("incorrect","correct")#
+rates
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]#
+test_matrix_4c=all_faces_4c[ind_test_4c,]#
+#
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+#
+test_id_4c = labelling_4c[ind_test_4c,]#
+#
+train_id_4c = labelling_4c[ind_train_4c,]#
+#training data first#
+#
+mean_face_4c <- colMeans(train_matrix_4c)#
+means_mat_4c=as.matrix(mean_face_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_4c=matrix(means_mat_4c,192,168)#
+pic_mat_size_4c = dim(train_matrix_4c)#
+pic_mat_centered_4c = mat.or.vec(pic_mat_size_4c[1],pic_mat_size_4c[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size_4c[1]){#
+	pic_mat_centered_4c[i,] = train_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_4c <- prcomp(pic_mat_centered_4c)#
+num_comp_mod_4c = length(pca_results_4c$x[,1])#
+scores_query_4c = mat.or.vec(num_comp_mod_4c,1)#
+trainingset_4c=NULL#
+for (i in 1:121){#
+	placeholder_4c = NULL#
+for(j in 1:25){#
+	loading_temp_4c = pca_results_4c$rotation[,j]#
+	scores_query_4c = pic_mat_centered_4c[i,] %*% loading_temp_4c  #
+	placeholder_4c = cbind(placeholder_4c,scores_query_4c)#
+	}#
+	trainingset_4c=rbind(trainingset_4c,placeholder_4c)#
+}#
+mean_face_test_4c <- colMeans(test_matrix_4c)#
+means_mat_test_4c=as.matrix(mean_face_test_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test_4c=matrix(means_mat_test_4c,192,168)#
+pic_mat_size_test_4c = dim(test_matrix_4c)#
+pic_mat_centered_test_4c = mat.or.vec(pic_mat_size_test_4c[1],pic_mat_size_test_4c[2])#
+#
+for (i in 1:pic_mat_size_test_4c[1]){#
+	pic_mat_centered_test_4c[i,] = test_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_test_4c <- prcomp(pic_mat_centered_test_4c)#
+num_comp_mod_test_4c = length(pca_results_test_4c$x[,1])#
+scores_query_test_4c = mat.or.vec(num_comp_mod_test_4c,1)#
+testingset_4c=NULL#
+for (i in 1:31){#
+	placeholder_test_4c = NULL#
+for(j in 1:25){#
+	loading_temp_test_4c = pca_results_test_4c$rotation[,j]#
+	scores_query_test_4c = pic_mat_centered_test_4c[i,] %*% loading_temp_test_4c  #
+	placeholder_test_4c = cbind(placeholder_test_4c,scores_query_test_4c)#
+	}#
+	testingset_4c=rbind(testingset_4c,placeholder_test_4c)#
+}#
+#this works?#
+cl2 <- factor(ind_train_4c)#
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)#
+Y_test_hat_4c!=cl2#
+incorrect <- sum(Y_test_hat_4c!=cl2)#
+correct <- sum(Y_test_hat_4c==cl2)#
+rates <- matrix(c(incorrect, correct))#
+rownames(rates) <-c("incorrect","correct")#
+rates
+fm_4c_size = dim(face_matrix_4c)#
+# Use 4/5 of the data for training, 1/5 for testing#
+ntrain_4c = floor(fm_4c_size[1]*4/5)#
+ntest_4c = fm_4c_size[1]-ntrain_4c#
+set.seed(2) # Set pseudo-random numbers#
+# You are resetting so that if you have used a random number in between the last use of sample(), you will still get the same output#
+ind_train_4c = sample(1:fm_4c_size[1],ntrain_4c)#
+ind_test_4c = c(1:fm_4c_size[1])[-ind_train_4c]#
+test_matrix_4c=all_faces_4c[ind_test_4c,]#
+#
+train_matrix_4c=all_faces_4c[ind_train_4c,]#
+#
+test_id_4c = labelling_4c[ind_test_4c,]#
+#
+train_id_4c = labelling_4c[ind_train_4c,]#
+#training data first#
+#
+mean_face_4c <- colMeans(train_matrix_4c)#
+means_mat_4c=as.matrix(mean_face_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_4c=matrix(means_mat_4c,192,168)#
+pic_mat_size_4c = dim(train_matrix_4c)#
+pic_mat_centered_4c = mat.or.vec(pic_mat_size_4c[1],pic_mat_size_4c[2])#
+#
+#subtract mean face from matrix#
+for (i in 1:pic_mat_size_4c[1]){#
+	pic_mat_centered_4c[i,] = train_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_4c <- prcomp(pic_mat_centered_4c)#
+num_comp_mod_4c = length(pca_results_4c$x[,1])#
+scores_query_4c = mat.or.vec(num_comp_mod_4c,1)#
+trainingset_4c=NULL#
+for (i in 1:121){#
+	placeholder_4c = NULL#
+for(j in 1:25){#
+	loading_temp_4c = pca_results_4c$rotation[,j]#
+	scores_query_4c = pic_mat_centered_4c[i,] %*% loading_temp_4c  #
+	placeholder_4c = cbind(placeholder_4c,scores_query_4c)#
+	}#
+	trainingset_4c=rbind(trainingset_4c,placeholder_4c)#
+}#
+mean_face_test_4c <- colMeans(test_matrix_4c)#
+means_mat_test_4c=as.matrix(mean_face_test_4c)#
+#
+#reshape this matrix into 192x168#
+means_mat_ref_test_4c=matrix(means_mat_test_4c,192,168)#
+pic_mat_size_test_4c = dim(test_matrix_4c)#
+pic_mat_centered_test_4c = mat.or.vec(pic_mat_size_test_4c[1],pic_mat_size_test_4c[2])#
+#
+for (i in 1:pic_mat_size_test_4c[1]){#
+	pic_mat_centered_test_4c[i,] = test_matrix_4c[i,] - mean_face_4c#
+}#
+#
+pca_results_test_4c <- prcomp(pic_mat_centered_test_4c)#
+num_comp_mod_test_4c = length(pca_results_test_4c$x[,1])#
+scores_query_test_4c = mat.or.vec(num_comp_mod_test_4c,1)#
+testingset_4c=NULL#
+for (i in 1:31){#
+	placeholder_test_4c = NULL#
+for(j in 1:25){#
+	loading_temp_test_4c = pca_results_test_4c$rotation[,j]#
+	scores_query_test_4c = pic_mat_centered_test_4c[i,] %*% loading_temp_test_4c  #
+	placeholder_test_4c = cbind(placeholder_test_4c,scores_query_test_4c)#
+	}#
+	testingset_4c=rbind(testingset_4c,placeholder_test_4c)#
+}#
+#this works?#
+cl2 <- factor(ind_train_4c)#
+Y_test_hat_4c <- knn(trainingset_4c, testingset_4c, cl2, k=1)#
+Y_test_hat_4c!=cl2#
+incorrect <- sum(Y_test_hat_4c!=cl2)#
+correct <- sum(Y_test_hat_4c==cl2)#
+rates <- matrix(c(incorrect, correct))#
+rownames(rates) <-c("incorrect","correct")#
+rates
+labelling_4c[ind_train_4c[1:5],]#
+labelling_4c[ind_test_4c[1:5],]
